@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
                 $table->foreignId('pemesanan_id')
                     ->unique()
-                    ->constrained('pemesanan')
+                    ->constrained('pemesanans')
                     ->cascadeOnDelete();
 
             $table->string('metode_pembayaran');
