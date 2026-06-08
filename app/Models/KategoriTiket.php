@@ -6,12 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class KategoriTiket extends Model
 {
-    protected $table = 'kategori_tiket';
-
     protected $fillable = [
         'konser_id',
         'nama_kategori',
-        'harga'
+        'harga',
+        'kuota',
+        'sisa_kuota',
+        'deskripsi',
     ];
 
     public function konser()
@@ -19,8 +20,8 @@ class KategoriTiket extends Model
         return $this->belongsTo(Konser::class);
     }
 
-    public function tiket()
+    public function pemesanan()
     {
-        return $this->hasMany(Tiket::class);
+        return $this->hasMany(Pemesanan::class);
     }
 }

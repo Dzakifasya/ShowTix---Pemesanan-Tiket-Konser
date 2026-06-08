@@ -6,20 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tiket extends Model
 {
-    protected $table = 'tiket';
-
     protected $fillable = [
-        'kategori_tiket_id',
-        'stok'
+        'pemesanan_id',
+        'kode_tiket',
+        'qr_code',
+        'status_tiket',
     ];
-
-    public function kategoriTiket()
-    {
-        return $this->belongsTo(KategoriTiket::class);
-    }
 
     public function pemesanan()
     {
-        return $this->hasMany(Pemesanan::class);
+        return $this->belongsTo(Pemesanan::class);
     }
 }

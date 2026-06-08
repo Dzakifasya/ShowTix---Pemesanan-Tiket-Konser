@@ -6,18 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class Konser extends Model
 {
-    protected $table = 'konser';
-
     protected $fillable = [
         'nama_konser',
-        'artis',
+        'deskripsi',
+        'tanggal_konser',
+        'waktu_konser',
         'lokasi',
-        'tanggal_konser'
+        'poster',
+        'status_konser',
     ];
+
+    public function artis()
+    {
+        return $this->belongsToMany(
+            Artis::class,
+            'konser_artis'
+        );
+    }
 
     public function kategoriTiket()
     {
         return $this->hasMany(KategoriTiket::class);
     }
 }
-

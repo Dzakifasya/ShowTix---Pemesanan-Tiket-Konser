@@ -3,20 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Pembayaran extends Model
 {
-    protected $table = 'pembayaran';
-
     protected $fillable = [
-        'pemesanan_id',
+        'transaksi_id',
+        'jumlah_bayar',
         'metode_pembayaran',
         'status_pembayaran',
-        'tanggal_bayar'
+        'bukti_pembayaran',
     ];
 
-    public function pemesanan()
+    public function transaksi(): BelongsTo
     {
-        return $this->belongsTo(Pemesanan::class);
+        return $this->belongsTo(Transaksi::class);
     }
 }

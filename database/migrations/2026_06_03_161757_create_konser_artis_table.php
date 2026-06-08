@@ -6,30 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('kategori_tikets', function (Blueprint $table) {
+        Schema::create('konser_artis', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('konser_id')
                 ->constrained('konsers')
                 ->cascadeOnDelete();
 
-            $table->string('nama_kategori');
-            $table->decimal('harga', 12, 2);
+            $table->foreignId('artis_id')
+                ->constrained('artis')
+                ->cascadeOnDelete();
 
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('kategori_tikets');
+        Schema::dropIfExists('konser_artis');
     }
 };

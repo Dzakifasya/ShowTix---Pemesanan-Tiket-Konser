@@ -6,28 +6,29 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pemesanan extends Model
 {
-    protected $table = 'pemesanan';
-
     protected $fillable = [
-        'user_id',
-        'tiket_id',
-        'jumlah',
-        'total_harga',
-        'tanggal_pemesanan'
+        'transaksi_id',
+        'kategori_tiket_id',
+        'jumlah_tiket',
+        'harga_satuan',
+        'subtotal',
     ];
 
-    public function user()
+    public function transaksi()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Transaksi::class);
+    }
+
+    public function kategoriTiket()
+    {
+        return $this->belongsTo(
+            KategoriTiket::class,
+            'kategori_tiket_id'
+        );
     }
 
     public function tiket()
     {
-        return $this->belongsTo(Tiket::class);
-    }
-
-    public function pembayaran()
-    {
-        return $this->hasOne(Pembayaran::class);
+        return $this->hasMany(Tiket::class);
     }
 }
