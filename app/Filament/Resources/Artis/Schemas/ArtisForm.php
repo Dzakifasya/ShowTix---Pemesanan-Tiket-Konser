@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Artis\Schemas;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -27,6 +28,12 @@ class ArtisForm
                 Textarea::make('deskripsi')
                     ->rows(4)
                     ->columnSpanFull(),
+
+                FileUpload::make('foto_artis')
+                    ->image()
+                    ->disk('public')
+                    ->directory('foto-artis')
+                    ->preserveFilenames(),
             ]);
     }
 }

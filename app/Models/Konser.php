@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Konser extends Model
 {
@@ -16,6 +18,11 @@ class Konser extends Model
         'status_konser',
     ];
 
+    protected $casts = [
+        'tanggal_konser' => 'date',
+        'waktu_konser' => 'datetime',
+    ];
+
     public function artis()
     {
         return $this->belongsToMany(
@@ -27,5 +34,15 @@ class Konser extends Model
     public function kategoriTiket()
     {
         return $this->hasMany(KategoriTiket::class);
+    }
+
+    public function pemesanan(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Pemesanan::class,
+            KategoriTiket::class,
+            'konser_id',
+            'kategori_tiket_id'
+        );
     }
 }
