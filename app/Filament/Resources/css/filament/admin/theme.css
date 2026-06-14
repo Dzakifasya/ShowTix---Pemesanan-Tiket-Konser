@@ -1,0 +1,47 @@
+:root{
+    --showtix-blue:#004AAD;
+    --showtix-orange:#FF6B00;
+}
+
+.fi-sidebar{
+    background: linear-gradient(
+        180deg,
+        #00337A 0%,
+        #004AAD 100%
+    );
+}
+
+.fi-sidebar-header{
+    border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.fi-sidebar-item-active{
+    background:#FF6B00 !important;
+    color:white !important;
+    border-radius:12px;
+}
+
+.fi-sidebar-item-button{
+    border-radius:12px;
+}
+
+.fi-sidebar-item-button:hover{
+    background:rgba(255,255,255,.08);
+}
+
+.fi-topbar{
+    background:white;
+    border-bottom:1px solid #e5e7eb;
+}
+
+.fi-section{
+    border-radius:18px;
+}
+
+.fi-card{
+    border-radius:18px;
+}
+
+.fi-ta-table{
+    border-radius:16px;
+}

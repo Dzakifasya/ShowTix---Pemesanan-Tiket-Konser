@@ -8,6 +8,7 @@ use App\Filament\Resources\Artis\Pages\ListArtis;
 use App\Filament\Resources\Artis\Schemas\ArtisForm;
 use App\Filament\Resources\Artis\Tables\ArtisTable;
 use App\Models\Artis;
+use UnitEnum;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -21,6 +22,10 @@ class ArtisResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'nama_artis';
+
+    protected static UnitEnum|string|null $navigationGroup = '🎵 Master Data';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {
@@ -47,4 +52,11 @@ class ArtisResource extends Resource
             'edit' => EditArtis::route('/{record}/edit'),
         ];
     }
+
+        public static function canViewAny(): bool
+    {
+        return auth()->user()->hasRole('Admin');
+    }
+
+
 }

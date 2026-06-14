@@ -22,6 +22,10 @@ class KonserResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'nama_konser';
 
+    
+    
+    protected static ?int $navigationSort = 2;
+
     public static function form(Schema $schema): Schema
     {
         return KonserForm::configure($schema);
@@ -46,5 +50,10 @@ class KonserResource extends Resource
             'create' => CreateKonser::route('/create'),
             'edit' => EditKonser::route('/{record}/edit'),
         ];
+    }
+
+        public static function canViewAny(): bool
+    {
+        return auth()->user()->hasRole('Admin');
     }
 }

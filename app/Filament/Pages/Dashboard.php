@@ -13,4 +13,16 @@ class Dashboard extends BaseDashboard
             StatsOverview::class,
         ];
     }
+    protected static ?string $title = 'ShowTix Dashboard';
+
+    public function getHeading(): string
+    {
+        return '🎫 ShowTix Admin Dashboard';
+    }
+
+    public function getSubheading(): ?string
+    {
+        return 'Concert Ticket Management System';
+    }
+    
 }

@@ -22,6 +22,9 @@ class TiketResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'kode_tiket';
 
+    
+    protected static ?int $navigationSort = 2;
+
     public static function form(Schema $schema): Schema
     {
         return TiketForm::configure($schema);
@@ -46,5 +49,10 @@ class TiketResource extends Resource
             'create' => CreateTiket::route('/create'),
             'edit' => EditTiket::route('/{record}/edit'),
         ];
+    }
+
+        public static function canViewAny(): bool
+    {
+        return auth()->user()->hasRole('Admin');
     }
 }

@@ -47,4 +47,10 @@ class PemesananResource extends Resource
             'edit' => EditPemesanan::route('/{record}/edit'),
         ];
     }
+
+        public static function canViewAny(): bool
+    {
+        return auth()->user()->hasRole('Admin')
+            || auth()->user()->hasRole('Operator');
+    }
 }

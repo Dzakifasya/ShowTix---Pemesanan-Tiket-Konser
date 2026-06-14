@@ -22,6 +22,10 @@ class KategoriTiketResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'nama_kategori';
 
+
+    
+    protected static ?int $navigationSort = 1;
+
     public static function form(Schema $schema): Schema
     {
         return KategoriTiketForm::configure($schema);
@@ -46,5 +50,10 @@ class KategoriTiketResource extends Resource
             'create' => CreateKategoriTiket::route('/create'),
             'edit' => EditKategoriTiket::route('/{record}/edit'),
         ];
+    }
+
+        public static function canViewAny(): bool
+    {
+        return auth()->user()->hasRole('Admin');
     }
 }

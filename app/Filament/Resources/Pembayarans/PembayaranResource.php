@@ -22,6 +22,10 @@ class PembayaranResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'metode_pembayaran';
 
+
+    
+    protected static ?int $navigationSort = 3;
+
     public static function form(Schema $schema): Schema
     {
         return PembayaranForm::configure($schema);
@@ -46,5 +50,11 @@ class PembayaranResource extends Resource
             'create' => CreatePembayaran::route('/create'),
             'edit' => EditPembayaran::route('/{record}/edit'),
         ];
+    }
+
+        public static function canViewAny(): bool
+    {
+        return auth()->user()->hasRole('Admin')
+            || auth()->user()->hasRole('Operator');
     }
 }
