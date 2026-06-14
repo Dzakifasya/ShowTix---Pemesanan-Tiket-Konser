@@ -1,83 +1,131 @@
 @extends('layouts.app')
 
-@section('title', 'Beranda - ShowTix')
+@section('title')
+ShowTix - Platform Tiket Konser Online
+@endsection
 
 @section('content')
-<!-- Hero Section -->
-<section class="bg-gradient-to-r from-[#003D82] via-[#0052a3] to-[#FF6600] relative overflow-hidden min-h-[500px] flex items-center">
-    <!-- Background Pattern -->
-    <div class="absolute inset-0 opacity-10">
-        <svg class="w-full h-full" viewBox="0 0 1200 600">
-            <defs>
-                <pattern id="pattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-                    <circle cx="50" cy="50" r="40" stroke="white" stroke-width="2" fill="none"/>
-                </pattern>
-            </defs>
-            <rect width="1200" height="600" fill="url(#pattern)"/>
-        </svg>
-    </div>
+<!-- Hero Banner Slider -->
+@include('components.hero-banner', ['banners' => $banners])
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <!-- Text Content -->
-            <div>
-                <h1 class="font-display font-bold text-5xl md:text-6xl text-white mb-6 leading-tight">
-                    Temukan Konser<br><span class="text-[#FFD700]">Impian Anda</span>
-                </h1>
-                <p class="text-xl text-gray-100 mb-8">Nikmati pengalaman berbelanja tiket konser yang mudah, aman, dan menyenangkan. Jangan lewatkan artis favorit Anda!</p>
-                <div class="flex gap-4 flex-wrap">
-                    <a href="#concerts" class="btn-orange">
-                        <i class="fas fa-ticket-alt mr-2"></i> Pesan Sekarang
-                    </a>
-                    <button class="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-[#003D82] transition-all duration-300">
-                        <i class="fas fa-play-circle mr-2"></i> Tonton Demo
-                    </button>
+<!-- Search Bar -->
+<section class="bg-white py-8 border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Search Input -->
+            <div class="relative">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Cari Konser</label>
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="Nama konser atau artis..." 
+                           class="w-full px-4 py-3 pl-10 rounded-lg border border-gray-300 focus:outline-none focus:border-secondary-900 focus:ring-2 focus:ring-secondary-900 focus:ring-opacity-20">
+                    <svg class="absolute left-3 top-3 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
                 </div>
             </div>
 
-            <!-- Illustration -->
-            <div class="relative h-96">
-                <div class="absolute inset-0 bg-gradient-to-br from-white to-blue-100 rounded-3xl opacity-20"></div>
-                <div class="absolute top-10 right-10 w-48 h-48 bg-white rounded-2xl shadow-2xl transform rotate-6 p-4">
-                    <div class="bg-gradient-to-br from-[#003D82] to-[#FF6600] rounded-xl h-full w-full flex items-center justify-center">
-                        <i class="fas fa-music text-white text-6xl"></i>
-                    </div>
-                </div>
+            <!-- Location Filter -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Lokasi</label>
+                <input type="text" id="locationInput" placeholder="Cari berdasarkan kota..." 
+                       class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-secondary-900 focus:ring-2 focus:ring-secondary-900 focus:ring-opacity-20">
+            </div>
+
+            <!-- Search Button -->
+            <div class="flex items-end">
+                <button onclick="searchConcerts()" class="w-full px-6 py-3 bg-secondary-900 text-white rounded-lg hover:bg-secondary-800 transition-colors font-semibold">
+                    <svg class="inline-block w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    Cari
+                </button>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Filter & Search Section -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="bg-white rounded-xl shadow-lg p-6 -mt-12 relative z-20 mb-12">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <!-- Search -->
-            <div class="relative">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Cari Konser</label>
-                <input 
-                    type="text" 
-                    id="search" 
-                    placeholder="Nama konser atau artis..." 
-                    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#003D82] focus:ring-2 focus:ring-[#003D82] focus:ring-opacity-20"
-                >
-            </div>
+<!-- Latest Events Section -->
+<section class="py-16 bg-background">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-3xl font-bold text-primary-900">Event Terbaru</h2>
+            <a href="#" class="text-secondary-900 font-semibold hover:underline">Lihat Semua →</a>
+        </div>
 
-            <!-- Kategori -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Kategori</label>
-                <select class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#003D82] focus:ring-2 focus:ring-[#003D82] focus:ring-opacity-20">
-                    <option value="">Semua Kategori</option>
-                    <option value="musik">Musik</option>
-                    <option value="festival">Festival</option>
-                    <option value="komedi">Komedi</option>
-                    <option value="olahraga">Olahraga</option>
-                </select>
+        @if($latestConcerts->count() > 0)
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                @foreach($latestConcerts as $concert)
+                    @include('components.event-card', ['concert' => $concert])
+                @endforeach
             </div>
+        @else
+            <div class="text-center py-12">
+                <p class="text-gray-600">Tidak ada event yang tersedia saat ini</p>
+            </div>
+        @endif
+    </div>
+</section>
 
-            <!-- Lokasi -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Lokasi</label>
+<!-- Recommended Events Section -->
+@if($recommendedConcerts->count() > 0)
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-primary-900 mb-8">Rekomendasi untuk Anda</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            @foreach($recommendedConcerts as $concert)
+                @include('components.event-card', ['concert' => $concert])
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
+<!-- Destinations Section -->
+<section class="py-16 bg-background">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-primary-900 mb-8">Destinasi Populer</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            @foreach($destinations as $destination)
+                @include('components.destination-card', ['destination' => $destination])
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-16 bg-gradient-to-r from-primary-900 to-secondary-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-4xl font-bold mb-4">Jangan Lewatkan Konser Favorit Anda</h2>
+        <p class="text-xl text-gray-200 mb-8">Dapatkan notifikasi untuk event terbaru dan penawaran eksklusif</p>
+        <form class="flex max-w-md mx-auto gap-2" method="GET" action="{{ route('search') }}">
+            <input type="email" placeholder="Masukkan email Anda..." required
+                   class="flex-1 px-4 py-3 rounded-lg text-primary-900 focus:outline-none">
+            <button type="submit" class="px-6 py-3 bg-white text-secondary-900 font-semibold rounded-lg hover:bg-gray-100 transition-colors">
+                Berlangganan
+            </button>
+        </form>
+    </div>
+</section>
+
+<script>
+function searchConcerts() {
+    const search = document.getElementById('searchInput').value;
+    const location = document.getElementById('locationInput').value;
+    
+    if (search || location) {
+        const url = new URL("{{ route('search') }}", window.location.origin);
+        if (search) url.searchParams.append('search', search);
+        if (location) url.searchParams.append('location', location);
+        window.location.href = url.toString();
+    }
+}
+
+// Allow Enter key to search
+document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') searchConcerts();
+});
+</script>
+@endsection
                 <select class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#003D82] focus:ring-2 focus:ring-[#003D82] focus:ring-opacity-20">
                     <option value="">Semua Kota</option>
                     <option value="jakarta">Jakarta</option>

@@ -14,6 +14,10 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/search', [HomeController::class, 'search'])->name('search');
 Route::get('/concert/{id}', [ConcertController::class, 'detail'])->name('concert.detail');
 
+// API Routes for AJAX
+Route::get('/api/concert/{id}/ticket-categories', [ConcertController::class, 'getTicketCategories']);
+Route::get('/api/concert/{id}', [ConcertController::class, 'getConcertDetails']);
+
 // Authentication Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -40,9 +44,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
 
     // Payment Routes
-    Route::get('/payment', [PaymentController::class, 'index'])->name('payment');
+    Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
     Route::post('/payment/verify', [PaymentController::class, 'verify'])->name('payment.verify');
-    Route::get('/payment/success/{transaksiId}', [PaymentController::class, 'success'])->name('payment.success');
+    Route::get('/payment/status', [PaymentController::class, 'getStatus'])->name('payment.status');
+    Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
+    Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');
 
     // Dashboard Routes
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

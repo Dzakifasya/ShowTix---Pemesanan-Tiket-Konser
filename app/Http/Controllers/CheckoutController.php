@@ -2,61 +2,87 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pembeli;
-use App\Models\Transaksi;
-use App\Models\Pemesanan;
-use App\Models\Tiket;
+use App\Http\Requests\StoreCheckoutRequest;
+use App\Services\CheckoutService;
+use App\Services\LocationService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
 {
-    public function index()
+    protected $checkoutService;
+
+    public function __construct(CheckoutService $checkoutService)
     {
-        $cartItems = session('cart', []);
-
-        if (empty($cartItems)) {
-            return redirect()->route('cart.index')->with('error', 'Keranjang Anda kosong');
-        }
-
-        return view('checkout.index', compact('cartItems'));
+        $this->checkoutService = $checkoutService;
+        $this->middleware('auth');
     }
 
-    public function process(Request $request)
+    /**
+     * Display checkout form
+     */
+    public function index()
     {
-        $validated = $request->validate([
-            'nama_lengkap' => 'required|string|max:255',
-            'email' => 'required|email',
-            'no_hp' => 'required|string|max:20',
-            'alamat' => 'required|string',
-            'tanggal_lahir' => 'required|date',
-            'metode_pembayaran' => 'required|in:bank_transfer,e_wallet,credit_card,cicilan',
-            'agree_terms' => 'required|accepted',
-        ]);
+        $summary = $this->checkoutService->getCheckoutSummary();
 
-        $cartItems = session('cart', []);
+        if (!$summary) {
+            return redirect()->route('home')->with('error', 'Keranjang Anda kosong');
+        }
 
-        if (empty($cartItems)) {
-            return back()->with('error', 'Keranjang Anda kosong');
+        // Get provinces for form
+        $provinces = LocationService::getProvinces();
+
+        return view('checkout.index', compact('summary', 'provinces'));
+    }
+
+    /**
+     * Process checkout (AJAX or Form)
+     */
+    public function process(StoreCheckoutRequest $request)
+    {
+        // Validate cart first
+        $cartValidation = $this->checkoutService->validateCart();
+        if (!$cartValidation['valid']) {
+            return response()->json([
+                'success' => false,
+                'message' => $cartValidation['message'],
+            ], 422);
         }
 
         try {
-            // Get or create pembeli
-            $pembeli = Pembeli::firstOrCreate(
-                ['user_id' => auth()->id()],
-                [
-                    'nama_lengkap' => $validated['nama_lengkap'],
-                    'no_hp' => $validated['no_hp'],
-                    'alamat' => $validated['alamat'],
-                    'tanggal_lahir' => $validated['tanggal_lahir'],
-                ]
+            $validated = $request->validated();
+
+            // Process checkout via service
+            $transaksi = $this->checkoutService->processCheckout(
+                auth()->id(),
+                $validated
             );
 
-            // Calculate totals
-            $subtotal = 0;
-            foreach ($cartItems as $item) {
-                $subtotal += $item['subtotal'];
+            // Return response
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Checkout berhasil',
+                    'transaksi_id' => $transaksi->id,
+                    'redirect_url' => route('payment.index', ['transaksi_id' => $transaksi->id]),
+                ]);
             }
+
+            return redirect()
+                ->route('payment.index', ['transaksi_id' => $transaksi->id])
+                ->with('success', 'Checkout berhasil, lanjutkan ke pembayaran');
+
+        } catch (\Exception $e) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
+
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+}
 
             $adminFee = $subtotal * 0.025;
             $serviceFee = 10000;

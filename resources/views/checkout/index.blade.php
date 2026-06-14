@@ -1,33 +1,182 @@
 @extends('layouts.app')
 
-@section('title', 'Checkout - ShowTix')
+@section('title')
+Checkout - ShowTix
+@endsection
 
 @section('content')
-<!-- Progress Bar -->
-<div class="bg-white border-b sticky top-16 z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex items-center justify-between">
-            <div class="flex-1">
-                <div class="flex items-center">
-                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-[#003D82] text-white font-bold">
-                        <i class="fas fa-shopping-cart"></i>
+<div class="py-8 bg-background min-h-screen">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold text-primary-900 mb-8">Checkout</h1>
+
+        @if($summary)
+            <form id="checkoutForm" class="space-y-8">
+                @csrf
+
+                <!-- Order Summary -->
+                <div class="bg-white rounded-2xl shadow-soft p-6">
+                    <h2 class="text-xl font-bold text-primary-900 mb-4">Ringkasan Pesanan</h2>
+                    <div class="space-y-3 pb-4 border-b border-gray-200">
+                        @foreach($summary['items'] as $item)
+                            <div class="flex justify-between">
+                                <div>
+                                    <p class="font-semibold text-gray-900">{{ $item['jumlah_tiket'] }}x {{ $item['kategori_nama'] }}</p>
+                                    <p class="text-sm text-gray-600">{{ $item['konser_nama'] }}</p>
+                                </div>
+                                <p class="font-semibold text-gray-900">Rp {{ number_format($item['subtotal'], 0, ',', '.') }}</p>
+                            </div>
+                        @endforeach
                     </div>
-                    <div class="flex-1 h-1 mx-3 bg-[#003D82]"></div>
-                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-[#003D82] text-white font-bold">
-                        2
-                    </div>
-                    <div class="flex-1 h-1 mx-3 bg-gray-300"></div>
-                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-300 text-gray-600 font-bold">
-                        3
+                    <div class="flex justify-between pt-4 text-lg font-bold text-primary-900">
+                        <span>Total:</span>
+                        <span>Rp {{ number_format($summary['total_price'], 0, ',', '.') }}</span>
                     </div>
                 </div>
+
+                <!-- Customer Information Form -->
+                <div class="bg-white rounded-2xl shadow-soft p-6">
+                    <h2 class="text-xl font-bold text-primary-900 mb-6">Data Diri Pembeli</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Full Name -->
+                        <div class="md:col-span-1">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap *</label>
+                            <input type="text" name="nama_lengkap" required value="{{ old('nama_lengkap', Auth::user()->name) }}"
+                                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-secondary-900 focus:ring-2 focus:ring-secondary-900 focus:ring-opacity-20 @error('nama_lengkap') border-red-500 @enderror"
+                                   placeholder="Nama lengkap Anda">
+                            @error('nama_lengkap')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
+                        </div>
+
+                        <!-- Email -->
+                        <div class="md:col-span-1">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
+                            <input type="email" name="email" required value="{{ old('email', Auth::user()->email) }}"
+                                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-secondary-900 focus:ring-2 focus:ring-secondary-900 focus:ring-opacity-20 @error('email') border-red-500 @enderror"
+                                   placeholder="email@example.com">
+                            @error('email')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
+                        </div>
+
+                        <!-- Email Confirmation -->
+                        <div class="md:col-span-1">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Konfirmasi Email *</label>
+                            <input type="email" name="email_confirmation" required value="{{ old('email_confirmation') }}"
+                                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-secondary-900 focus:ring-2 focus:ring-secondary-900 focus:ring-opacity-20 @error('email_confirmation') border-red-500 @enderror"
+                                   placeholder="Konfirmasi email Anda">
+                            @error('email_confirmation')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
+                        </div>
+
+                        <!-- WhatsApp Number -->
+                        <div class="md:col-span-1">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Nomor WhatsApp *</label>
+                            <input type="tel" name="no_whatsapp" required value="{{ old('no_whatsapp') }}"
+                                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-secondary-900 focus:ring-2 focus:ring-secondary-900 focus:ring-opacity-20 @error('no_whatsapp') border-red-500 @enderror"
+                                   placeholder="08xxxxxxxxx atau +628xxxxxxxxx">
+                            @error('no_whatsapp')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
+                        </div>
+
+                        <!-- Gender -->
+                        <div class="md:col-span-1">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Jenis Kelamin *</label>
+                            <select name="jenis_kelamin" required
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-secondary-900 focus:ring-2 focus:ring-secondary-900 focus:ring-opacity-20 @error('jenis_kelamin') border-red-500 @enderror">
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="laki-laki" {{ old('jenis_kelamin') === 'laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="perempuan" {{ old('jenis_kelamin') === 'perempuan' ? 'selected' : '' }}>Perempuan</option>
+                                <option value="other" {{ old('jenis_kelamin') === 'other' ? 'selected' : '' }}>Lainnya</option>
+                            </select>
+                            @error('jenis_kelamin')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
+                        </div>
+
+                        <!-- Province -->
+                        <div class="md:col-span-1">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Provinsi *</label>
+                            <select name="provinsi" required
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-secondary-900 focus:ring-2 focus:ring-secondary-900 focus:ring-opacity-20 @error('provinsi') border-red-500 @enderror">
+                                <option value="">Pilih Provinsi</option>
+                                @foreach($provinces as $key => $value)
+                                    <option value="{{ $key }}" {{ old('provinsi') === $key ? 'selected' : '' }}>{{ $value }}</option>
+                                @endforeach
+                            </select>
+                            @error('provinsi')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
+                        </div>
+
+                        <!-- Birth Date -->
+                        <div class="md:col-span-1">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Lahir *</label>
+                            <input type="date" name="tanggal_lahir" required value="{{ old('tanggal_lahir') }}"
+                                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-secondary-900 focus:ring-2 focus:ring-secondary-900 focus:ring-opacity-20 @error('tanggal_lahir') border-red-500 @enderror">
+                            @error('tanggal_lahir')<p class="text-red-600 text-sm mt-1">{{ $message }}</p>@enderror
+                        </div>
+                    </div>
+
+                    <!-- Terms & Conditions -->
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <label class="flex items-start space-x-3 cursor-pointer">
+                            <input type="checkbox" name="agree_terms" required class="mt-1"
+                                   {{ old('agree_terms') ? 'checked' : '' }}>
+                            <span class="text-sm text-gray-700">
+                                Saya telah membaca dan menyetujui 
+                                <a href="#" class="text-secondary-900 hover:underline font-semibold">Syarat dan Ketentuan</a>
+                                serta 
+                                <a href="#" class="text-secondary-900 hover:underline font-semibold">Kebijakan Privasi</a>
+                            </span>
+                        </label>
+                        @error('agree_terms')<p class="text-red-600 text-sm mt-2">{{ $message }}</p>@enderror
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex space-x-4">
+                    <a href="{{ route('home') }}" class="flex-1 px-6 py-4 border-2 border-primary-900 text-primary-900 rounded-lg hover:bg-gray-50 transition-colors font-semibold text-center">
+                        Batal
+                    </a>
+                    <button type="submit" class="flex-1 px-6 py-4 bg-secondary-900 text-white rounded-lg hover:bg-secondary-800 transition-colors font-semibold">
+                        Lanjut ke Pembayaran
+                    </button>
+                </div>
+            </form>
+        @else
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+                <p class="text-yellow-800 font-semibold mb-4">Keranjang Anda kosong</p>
+                <a href="{{ route('home') }}" class="inline-block px-6 py-3 bg-secondary-900 text-white rounded-lg hover:bg-secondary-800 transition-colors">
+                    Kembali ke Beranda
+                </a>
             </div>
-        </div>
-        <div class="flex justify-between mt-3 text-xs">
-            <span class="font-semibold text-[#003D82]">Keranjang</span>
-            <span class="font-semibold text-[#003D82]">Data Pribadi</span>
-            <span class="text-gray-500">Pembayaran</span>
-        </div>
+        @endif
+    </div>
+</div>
+
+<script>
+document.getElementById('checkoutForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+
+    try {
+        const response = await fetch('{{ route("checkout.process") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            window.location.href = result.redirect_url;
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (err) {
+        alert('Terjadi kesalahan: ' + err.message);
+    }
+});
+</script>
+@endsection
     </div>
 </div>
 

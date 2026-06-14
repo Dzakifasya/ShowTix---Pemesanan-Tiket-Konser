@@ -4,100 +4,193 @@ namespace App\Http\Controllers;
 
 use App\Models\Konser;
 use App\Models\KategoriTiket;
+use App\Services\CartService;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    protected $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
+
+    /**
+     * Display shopping cart
+     */
     public function index()
     {
         $cartItems = session('cart', []);
-        return view('cart.index', compact('cartItems'));
+        $cartCount = session('cart_count', 0);
+
+        // Enrich cart items with current concert info (in case it changed)
+        $enrichedItems = [];
+        $totalPrice = 0;
+
+        foreach ($cartItems as $key => $item) {
+            $kategoriTiket = KategoriTiket::with('konser')->find($item['kategori_tiket_id']);
+
+            if ($kategoriTiket) {
+                $enrichedItem = [
+                    'key' => $key,
+                    'konser' => $kategoriTiket->konser,
+                    'kategori' => $kategoriTiket,
+                    'jumlah_tiket' => $item['jumlah_tiket'],
+                    'harga_satuan' => $item['harga_satuan'],
+                    'subtotal' => $item['subtotal'],
+                ];
+
+                $enrichedItems[] = $enrichedItem;
+                $totalPrice += $item['subtotal'];
+            }
+        }
+
+        return view('cart.index', compact('enrichedItems', 'cartCount', 'totalPrice'));
     }
 
+    /**
+     * Add item to cart (AJAX)
+     */
     public function add(Request $request)
     {
         $validated = $request->validate([
-            'konser_id' => 'required|exists:konsers,id',
-            'kategori_tiket_id' => 'required|exists:kategori_tikets,id',
-            'jumlah_tiket' => 'required|integer|min:1',
-            'harga_satuan' => 'required|numeric|min:0',
+            'konser_id' => 'required|integer|exists:konsers,id',
+            'kategori_tiket_id' => 'required|integer|exists:kategori_tikets,id',
+            'jumlah_tiket' => 'required|integer|min:1|max:50',
         ]);
 
-        $konser = Konser::find($validated['konser_id']);
-        $kategori = KategoriTiket::find($validated['kategori_tiket_id']);
+        try {
+            $konser = Konser::find($validated['konser_id']);
+            $kategori = KategoriTiket::find($validated['kategori_tiket_id']);
 
-        // Check if ticket quantity is available
-        if ($kategori->sisa_kuota < $validated['jumlah_tiket']) {
-            return back()->with('error', 'Tiket yang tersedia tidak cukup');
+            // Check if ticket quantity is available
+            if ($kategori->sisa_kuota < $validated['jumlah_tiket']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Tiket {$kategori->nama_kategori} hanya tersisa {$kategori->sisa_kuota}",
+                ], 422);
+            }
+
+            // Add to cart via service
+            $this->cartService->addToCart(
+                $validated['konser_id'],
+                $validated['kategori_tiket_id'],
+                $validated['jumlah_tiket'],
+                $kategori->harga
+            );
+
+            $cartCount = count(session('cart', []));
+
+            return response()->json([
+                'success' => true,
+                'message' => "Tiket {$kategori->nama_kategori} berhasil ditambahkan ke keranjang",
+                'cart_count' => $cartCount,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
         }
-
-        $cart = session('cart', []);
-
-        $itemKey = 'item_' . $validated['konser_id'] . '_' . $validated['kategori_tiket_id'];
-
-        $cartItem = [
-            'id' => $itemKey,
-            'konser_id' => $validated['konser_id'],
-            'konser_nama' => $konser->nama_konser,
-            'poster' => $konser->poster,
-            'tanggal_konser' => is_string($konser->tanggal_konser) ? \Carbon\Carbon::parse($konser->tanggal_konser)->format('d M Y') : $konser->tanggal_konser->format('d M Y'),
-            'lokasi' => $konser->lokasi,
-            'kategori_tiket_id' => $validated['kategori_tiket_id'],
-            'kategori_nama' => $kategori->nama_kategori,
-            'harga_satuan' => $validated['harga_satuan'],
-            'jumlah_tiket' => $validated['jumlah_tiket'],
-            'subtotal' => $validated['harga_satuan'] * $validated['jumlah_tiket'],
-        ];
-
-        if (array_key_exists($itemKey, $cart)) {
-            $cart[$itemKey]['jumlah_tiket'] += $validated['jumlah_tiket'];
-            $cart[$itemKey]['subtotal'] = $cart[$itemKey]['harga_satuan'] * $cart[$itemKey]['jumlah_tiket'];
-        } else {
-            $cart[$itemKey] = $cartItem;
-        }
-
-        session(['cart' => $cart]);
-        session(['cart_count' => count($cart)]);
-
-        return redirect()->route('cart.index')->with('success', 'Tiket berhasil ditambahkan ke keranjang');
     }
 
+    /**
+     * Update cart item quantity (AJAX)
+     */
     public function update(Request $request, $itemId)
     {
         $validated = $request->validate([
-            'jumlah_tiket' => 'required|integer|min:1',
+            'jumlah_tiket' => 'required|integer|min:1|max:50',
         ]);
 
-        $cart = session('cart', []);
+        try {
+            $cart = session('cart', []);
 
-        if (array_key_exists($itemId, $cart)) {
-            $cart[$itemId]['jumlah_tiket'] = $validated['jumlah_tiket'];
-            $cart[$itemId]['subtotal'] = $cart[$itemId]['harga_satuan'] * $validated['jumlah_tiket'];
+            if (!array_key_exists($itemId, $cart)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Item tidak ditemukan di keranjang',
+                ], 404);
+            }
 
-            session(['cart' => $cart]);
-            return back()->with('success', 'Keranjang berhasil diperbarui');
+            $kategoriTiket = KategoriTiket::find($cart[$itemId]['kategori_tiket_id']);
+
+            // Check availability
+            if ($kategoriTiket->sisa_kuota < $validated['jumlah_tiket']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Tiket hanya tersisa {$kategoriTiket->sisa_kuota}",
+                ], 422);
+            }
+
+            $this->cartService->updateItem($itemId, $validated['jumlah_tiket']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Keranjang berhasil diperbarui',
+                'subtotal' => $cart[$itemId]['harga_satuan'] * $validated['jumlah_tiket'],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
         }
-
-        return back()->with('error', 'Item tidak ditemukan');
     }
 
-    public function remove($itemId)
+    /**
+     * Remove item from cart (AJAX)
+     */
+    public function remove(Request $request, $itemId)
     {
-        $cart = session('cart', []);
+        try {
+            $this->cartService->removeItem($itemId);
 
-        if (array_key_exists($itemId, $cart)) {
-            unset($cart[$itemId]);
-            session(['cart' => $cart]);
-            session(['cart_count' => count($cart)]);
-            return back()->with('success', 'Tiket berhasil dihapus dari keranjang');
+            $cartCount = count(session('cart', []));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tiket dihapus dari keranjang',
+                'cart_count' => $cartCount,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
         }
-
-        return back()->with('error', 'Item tidak ditemukan');
     }
 
+    /**
+     * Clear entire cart
+     */
     public function clear()
     {
-        session(['cart' => []]);
+        session()->forget('cart');
+        session()->forget('cart_count');
+
+        return redirect()->route('home')->with('success', 'Keranjang dikosongkan');
+    }
+
+    /**
+     * Get cart summary (AJAX)
+     */
+    public function getSummary()
+    {
+        $cart = session('cart', []);
+        $totalPrice = array_sum(array_column($cart, 'subtotal'));
+        $itemCount = count($cart);
+        $ticketCount = array_sum(array_column($cart, 'jumlah_tiket'));
+
+        return response()->json([
+            'success' => true,
+            'item_count' => $itemCount,
+            'ticket_count' => $ticketCount,
+            'total_price' => $totalPrice,
+        ]);
+    }
+}
         session(['cart_count' => 0]);
         return redirect()->route('home')->with('success', 'Keranjang berhasil dikosongkan');
     }

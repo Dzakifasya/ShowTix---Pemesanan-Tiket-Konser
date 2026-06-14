@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Keranjang Belanja - ShowTix')
+@section('title')
+Keranjang Belanja - ShowTix
+@endsection
 
 @section('content')
 <!-- Breadcrumb -->

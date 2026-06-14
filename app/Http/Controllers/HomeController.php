@@ -3,57 +3,86 @@
 namespace App\Http\Controllers;
 
 use App\Models\Konser;
+use App\Services\LocationService;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
+    /**
+     * Display homepage with featured events and destinations
+     */
     public function index()
     {
-        // Get popular concerts (top selling) with ticket count
-        $konserTerpopuler = Konser::where('status_konser', 'aktif')
+        // Get banner/featured concerts (latest active ones)
+        $banners = Konser::where('status_konser', 'aktif')
             ->with(['artis', 'kategoriTiket'])
-            ->withCount('pemesanan')
-            ->orderByDesc('pemesanan_count')
-            ->take(4)
+            ->latest('created_at')
+            ->take(5)
             ->get();
 
-        // Get upcoming concerts
-        $konserMendatang = Konser::where('status_konser', 'aktif')
-            ->where('tanggal_konser', '>=', now())
+        // Get latest active concerts
+        $latestConcerts = Konser::where('status_konser', 'aktif')
             ->with(['artis', 'kategoriTiket'])
+            ->where('tanggal_konser', '>=', now()->subMonth())
             ->orderBy('tanggal_konser')
-            ->paginate(8);
+            ->paginate(8, ['*'], 'latest_page');
 
-        return view('home', compact('konserTerpopuler', 'konserMendatang'));
+        // Get recommended concerts (most popular by orders)
+        $recommendedConcerts = Konser::where('status_konser', 'aktif')
+            ->with(['artis', 'kategoriTiket'])
+            ->withCount('pemesanan')
+            ->having('pemesanan_count', '>', 0)
+            ->orderByDesc('pemesanan_count')
+            ->take(6)
+            ->get();
+
+        // Get destinations
+        $destinations = LocationService::getDestinations();
+
+        // Get cart count from session
+        $cartCount = session('cart_count', 0);
+
+        return view('home', compact(
+            'banners',
+            'latestConcerts',
+            'recommendedConcerts',
+            'destinations',
+            'cartCount'
+        ));
     }
 
+    /**
+     * Search concerts by name or location
+     */
     public function search(Request $request)
     {
-        $query = Konser::query();
+        $query = Konser::where('status_konser', 'aktif');
+        $searchTerm = $request->input('search', '');
+        $location = $request->input('location', '');
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where('nama_konser', 'LIKE', "%{$search}%")
-                  ->orWhereHas('artis', function ($q) use ($search) {
-                      $q->where('nama_artis', 'LIKE', "%{$search}%");
+        // Search by concert name or artist
+        if ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('nama_konser', 'LIKE', "%{$searchTerm}%")
+                  ->orWhereHas('artis', function ($subQ) use ($searchTerm) {
+                      $subQ->where('nama_artis', 'LIKE', "%{$searchTerm}%");
                   });
+            });
         }
 
-        if ($request->filled('kategori')) {
-            $query->where('kategori', $request->kategori);
+        // Search by location
+        if ($location) {
+            $query->where('lokasi', 'LIKE', "%{$location}%");
         }
 
-        if ($request->filled('lokasi')) {
-            $query->where('lokasi', 'LIKE', "%{$request->lokasi}%");
+        $concerts = $query->with(['artis', 'kategoriTiket'])
+                         ->orderBy('tanggal_konser')
+                         ->paginate(12);
+
+        if ($request->wantsJson()) {
+            return response()->json($concerts);
         }
 
-        if ($request->filled('tanggal')) {
-            $query->whereDate('tanggal_konser', $request->tanggal);
-        }
-
-        $konser = $query->where('status_konser', 'aktif')
-                       ->paginate(12);
-
-        return view('search', compact('konser'));
+        return view('search', compact('concerts', 'searchTerm', 'location'));
     }
 }

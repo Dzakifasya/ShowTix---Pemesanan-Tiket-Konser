@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Pembayaran - ShowTix')
+@section('title')
+Pembayaran - ShowTix
+@endsection
 
 @section('content')
 <!-- Progress Bar -->

@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Hasil Pencarian - ShowTix')
+@section('title')
+Hasil Pencarian - ShowTix
+@endsection
 
 @section('content')
 <!-- Breadcrumb -->
