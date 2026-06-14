@@ -9,6 +9,7 @@ use App\Filament\Resources\Tikets\Schemas\TiketForm;
 use App\Filament\Resources\Tikets\Tables\TiketsTable;
 use App\Models\Tiket;
 use BackedEnum;
+
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -23,7 +24,8 @@ class TiketResource extends Resource
     protected static ?string $recordTitleAttribute = 'kode_tiket';
 
     
-    protected static ?int $navigationSort = 2;
+    
+    
 
     public static function form(Schema $schema): Schema
     {

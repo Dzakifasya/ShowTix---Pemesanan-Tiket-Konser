@@ -9,6 +9,7 @@ use App\Filament\Resources\Pemesanans\Schemas\PemesananForm;
 use App\Filament\Resources\Pemesanans\Tables\PemesanansTable;
 use App\Models\Pemesanan;
 use BackedEnum;
+
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -21,6 +22,10 @@ class PemesananResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'subtotal';
+
+    
+
+    
 
     public static function form(Schema $schema): Schema
     {

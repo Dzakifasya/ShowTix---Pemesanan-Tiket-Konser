@@ -9,6 +9,7 @@ use App\Filament\Resources\Transaksis\Schemas\TransaksiForm;
 use App\Filament\Resources\Transaksis\Tables\TransaksisTable;
 use App\Models\Transaksi;
 use BackedEnum;
+
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -21,8 +22,10 @@ class TransaksiResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'kode_transaksi';
+
+
     
-    protected static ?int $navigationSort = 4;
+    
 
     public static function form(Schema $schema): Schema
     {

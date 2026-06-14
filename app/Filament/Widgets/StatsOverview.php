@@ -9,7 +9,7 @@ use App\Models\Transaksi;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
-class ShowTixStats extends StatsOverviewWidget
+class StatsOverview extends StatsOverviewWidget
 {
     protected function getStats(): array
     {

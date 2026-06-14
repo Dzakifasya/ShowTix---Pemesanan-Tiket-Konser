@@ -24,7 +24,7 @@ class KonserResource extends Resource
 
     
     
-    protected static ?int $navigationSort = 2;
+    
 
     public static function form(Schema $schema): Schema
     {
