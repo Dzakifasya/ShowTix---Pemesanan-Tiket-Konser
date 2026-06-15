@@ -32,7 +32,13 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended(route('dashboard'))->with('success', 'Selamat datang kembali!');
+            
+            $user = Auth::user();
+            if ($user->is_admin()) {
+                return redirect()->intended('/admin')->with('success', 'Selamat datang kembali, Admin!');
+            }
+            
+            return redirect()->intended(route('home'))->with('success', 'Selamat datang kembali!');
         }
 
         return back()->withErrors([
@@ -70,7 +76,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard'))->with('success', 'Akun berhasil dibuat! Selamat datang di ShowTix.');
+        return redirect(route('home'))->with('success', 'Akun berhasil dibuat! Selamat datang di ShowTix.');
     }
 
     /**

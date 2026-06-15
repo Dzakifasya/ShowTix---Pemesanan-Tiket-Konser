@@ -9,8 +9,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Pembeli;
 use Spatie\Permission\Traits\HasRoles;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, HasRoles;
@@ -27,9 +29,14 @@ class User extends Authenticatable
     'is_admin',
     ];
 
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->is_admin || $this->role === 'admin' || $this->hasRole('Admin');
+    }
+
     public function is_admin()
     {
-    return $this->is_admin == true;
+        return $this->is_admin == true || $this->role === 'admin' || $this->hasRole('Admin');
     }
 
     public function pemesanan()

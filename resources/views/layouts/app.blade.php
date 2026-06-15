@@ -127,16 +127,23 @@
                                 <i class="fas fa-chevron-down text-xs"></i>
                             </button>
                             <div class="absolute right-0 mt-0 w-48 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 py-2">
-                                <a href="{{ route('profile') }}" class="block px-4 py-2 text-gray-700 hover:bg-[#003D82] hover:text-white transition">
-                                    <i class="fas fa-user mr-2"></i> Profil
-                                </a>
-                                <a href="{{ route('history') }}" class="block px-4 py-2 text-gray-700 hover:bg-[#003D82] hover:text-white transition">
-                                    <i class="fas fa-history mr-2"></i> Riwayat Pembelian
-                                </a>
-                                <a href="{{ route('tickets') }}" class="block px-4 py-2 text-gray-700 hover:bg-[#003D82] hover:text-white transition">
-                                    <i class="fas fa-ticket-alt mr-2"></i> Tiket Saya
-                                </a>
-                                <hr class="my-2">
+                                @if(auth()->user()->is_admin())
+                                    <a href="/admin" class="block px-4 py-2 text-gray-700 hover:bg-[#003D82] hover:text-white transition font-semibold">
+                                        <i class="fas fa-user-shield mr-2 text-[#FF6600]"></i> Panel Admin
+                                    </a>
+                                    <hr class="my-2">
+                                @else
+                                    <a href="{{ route('profile') }}" class="block px-4 py-2 text-gray-700 hover:bg-[#003D82] hover:text-white transition">
+                                        <i class="fas fa-user mr-2"></i> Profil
+                                    </a>
+                                    <a href="{{ route('history') }}" class="block px-4 py-2 text-gray-700 hover:bg-[#003D82] hover:text-white transition">
+                                        <i class="fas fa-history mr-2"></i> Riwayat Pembelian
+                                    </a>
+                                    <a href="{{ route('tickets') }}" class="block px-4 py-2 text-gray-700 hover:bg-[#003D82] hover:text-white transition">
+                                        <i class="fas fa-ticket-alt mr-2"></i> Tiket Saya
+                                    </a>
+                                    <hr class="my-2">
+                                @endif
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-[#FF6600] hover:text-white transition">

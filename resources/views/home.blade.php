@@ -33,7 +33,7 @@ ShowTix - Platform Tiket Konser Online
 
             <!-- Search Button -->
             <div class="flex items-end">
-                <button onclick="searchConcerts()" class="w-full px-6 py-3 bg-secondary-900 text-white rounded-lg hover:bg-secondary-800 transition-colors font-semibold">
+                <button onclick="searchConcerts()" class="w-full px-6 py-3 bg-[#FF6600] text-white rounded-lg hover:bg-orange-600 transition-colors font-semibold">
                     <svg class="inline-block w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
@@ -125,14 +125,6 @@ document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') searchConcerts();
 });
 </script>
-
-@if($latestConcerts->count() > 0)
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-12">
-        @foreach($latestConcerts as $concert)
-            @include('components.event-card', ['concert' => $concert])
-        @endforeach
-    </div>
-@endif
 
 <!-- Upcoming Concerts Grid Section -->
 <section id="concerts" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

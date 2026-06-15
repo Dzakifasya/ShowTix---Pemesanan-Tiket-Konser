@@ -5,9 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Transaksi;
 use App\Models\Tiket;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class DashboardController extends Controller
+class DashboardController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(function ($request, $next) {
+                if (auth()->check() && auth()->user()->is_admin()) {
+                    return redirect('/admin');
+                }
+                return $next($request);
+            }),
+        ];
+    }
+
     public function index()
     {
         $user = auth()->user();
@@ -20,20 +34,51 @@ class DashboardController extends Controller
                              ->orderByDesc('created_at')
                              ->paginate(10);
 
-        // Get upcoming concerts
-        $upcomingConcerts = collect($transaksi)->map(fn($t) => 
-            $t->pemesanan->first()?->kategoriTiket?->konser
-        )->filter()->unique('id');
+        // Fetch all transactions for calculating statistics
+        $allTransaksi = Transaksi::where('pembeli_id', $pembeli?->id)->get();
+        
+        // Filter completed/successful transactions (case-insensitive for 'completed' and 'berhasil')
+        $completedTransaksi = $allTransaksi->filter(fn($t) => 
+            in_array(strtolower($t->status_transaksi), ['completed', 'berhasil'])
+        );
 
-        return view('dashboard.index', compact('user', 'transaksi', 'upcomingConcerts'));
+        // Calculate statistics
+        $totalBelanja = $completedTransaksi->sum('total_harga');
+        
+        $totalTiket = $completedTransaksi->flatMap(fn($t) => $t->pemesanan)->sum('jumlah_tiket');
+        
+        $totalKonser = $completedTransaksi->flatMap(fn($t) => $t->pemesanan)
+            ->map(fn($p) => $p->kategoriTiket?->konser_id)
+            ->filter()
+            ->unique()
+            ->count();
+
+        $upcomingConcertsCount = $completedTransaksi->flatMap(fn($t) => $t->pemesanan)
+            ->map(fn($p) => $p->kategoriTiket?->konser)
+            ->filter(fn($k) => $k && \Carbon\Carbon::parse($k->tanggal_konser)->isFuture())
+            ->unique('id')
+            ->count();
+
+        // Get actual upcoming concerts for the user
+        $upcomingConcerts = $completedTransaksi->flatMap(fn($t) => $t->pemesanan)
+            ->map(fn($p) => $p->kategoriTiket?->konser)
+            ->filter(fn($k) => $k && \Carbon\Carbon::parse($k->tanggal_konser)->isFuture())
+            ->unique('id');
+
+        return view('dashboard.index', compact(
+            'user', 
+            'transaksi', 
+            'upcomingConcerts',
+            'totalBelanja',
+            'totalTiket',
+            'totalKonser',
+            'upcomingConcertsCount'
+        ));
     }
 
     public function profile()
     {
-        $user = auth()->user();
-        $pembeli = $user->pembeli;
-
-        return view('dashboard.profile', compact('user', 'pembeli'));
+        return redirect()->route('dashboard', ['tab' => 'settings']);
     }
 
     public function updateProfile(Request $request)
@@ -72,26 +117,12 @@ class DashboardController extends Controller
 
     public function history()
     {
-        $pembeli = auth()->user()->pembeli;
-        
-        $transaksi = Transaksi::where('pembeli_id', $pembeli?->id)
-                             ->orderByDesc('created_at')
-                             ->paginate(10);
-
-        return view('dashboard.history', compact('transaksi'));
+        return redirect()->route('dashboard', ['tab' => 'history']);
     }
 
     public function tickets()
     {
-        $pembeli = auth()->user()->pembeli;
-
-        $tickets = Tiket::whereHas('pemesanan.transaksi', function($query) use ($pembeli) {
-            $query->where('pembeli_id', $pembeli?->id);
-        })
-        ->orderByDesc('created_at')
-        ->paginate(10);
-
-        return view('dashboard.tickets', compact('tickets'));
+        return redirect()->route('dashboard', ['tab' => 'upcoming']);
     }
 
     public function downloadTicket($tiketId)

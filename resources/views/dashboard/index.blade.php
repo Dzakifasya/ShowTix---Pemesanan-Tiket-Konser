@@ -19,6 +19,24 @@ Dashboard - ShowTix
         </div>
     </div>
 
+    @if(session('success'))
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow-md" role="alert">
+            <p class="font-bold">Berhasil</p>
+            <p>{{ session('success') }}</p>
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded shadow-md" role="alert">
+            <p class="font-bold">Terjadi Kesalahan</p>
+            <ul class="list-disc pl-5">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <!-- Quick Stats -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
         <!-- Total Konser -->
@@ -26,7 +44,7 @@ Dashboard - ShowTix
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-600 text-sm font-semibold mb-1">Konser Ditonton</p>
-                    <p class="font-display font-bold text-3xl text-gray-800">12</p>
+                    <p class="font-display font-bold text-3xl text-gray-800">{{ $totalKonser }}</p>
                 </div>
                 <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-[#003D82] text-2xl">
                     <i class="fas fa-music"></i>
@@ -39,7 +57,7 @@ Dashboard - ShowTix
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-600 text-sm font-semibold mb-1">Total Tiket</p>
-                    <p class="font-display font-bold text-3xl text-gray-800">18</p>
+                    <p class="font-display font-bold text-3xl text-gray-800">{{ $totalTiket }}</p>
                 </div>
                 <div class="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center text-[#FF6600] text-2xl">
                     <i class="fas fa-ticket-alt"></i>
@@ -52,7 +70,7 @@ Dashboard - ShowTix
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-600 text-sm font-semibold mb-1">Total Belanja</p>
-                    <p class="font-display font-bold text-3xl text-gray-800">Rp 5M</p>
+                    <p class="font-display font-bold text-3xl text-gray-800">Rp {{ number_format($totalBelanja, 0, ',', '.') }}</p>
                 </div>
                 <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-2xl">
                     <i class="fas fa-wallet"></i>
@@ -65,7 +83,7 @@ Dashboard - ShowTix
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-600 text-sm font-semibold mb-1">Konser Mendatang</p>
-                    <p class="font-display font-bold text-3xl text-gray-800">3</p>
+                    <p class="font-display font-bold text-3xl text-gray-800">{{ $upcomingConcertsCount }}</p>
                 </div>
                 <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 text-2xl">
                     <i class="fas fa-calendar"></i>
@@ -91,63 +109,121 @@ Dashboard - ShowTix
 
     <!-- Tab Content: Upcoming Concerts -->
     <div id="upcoming-tab" class="tab-content">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @for($i = 1; $i <= 3; $i++)
-                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition card-concert">
-                    <div class="h-40 bg-gradient-to-br from-[#003D82] to-[#FF6600] flex items-center justify-center">
-                        <i class="fas fa-music text-white text-5xl opacity-30"></i>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-bold text-lg text-gray-800 mb-2">Konser Besar {{ $i }}</h3>
-                        <div class="space-y-2 text-sm text-gray-600 mb-4">
-                            <p><i class="fas fa-calendar text-[#FF6600] mr-2"></i>20 Juni 2026</p>
-                            <p><i class="fas fa-map-marker-alt text-[#FF6600] mr-2"></i>Jakarta</p>
-                            <p><i class="fas fa-ticket-alt text-[#FF6600] mr-2"></i>2 Tiket</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button class="flex-1 btn-primary text-sm py-2">Lihat Tiket</button>
-                            <button class="flex-1 btn-outline-primary text-sm py-2">Tunda</button>
-                        </div>
-                    </div>
+        @if($upcomingConcerts->isEmpty())
+            <div class="bg-white rounded-xl shadow-md p-8 text-center border border-gray-100">
+                <div class="text-gray-400 text-5xl mb-4">
+                    <i class="fas fa-calendar-times"></i>
                 </div>
-            @endfor
-        </div>
+                <h3 class="font-bold text-lg text-gray-800 mb-2">Belum Ada Konser Mendatang</h3>
+                <p class="text-gray-600 mb-6">Anda belum memesan tiket untuk konser mendatang atau pembayaran Anda belum selesai.</p>
+                <a href="{{ route('home') }}" class="btn-primary inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white font-bold transition shadow hover:shadow-md">
+                    <i class="fas fa-search"></i> Cari Konser
+                </a>
+            </div>
+        @else
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($upcomingConcerts as $konser)
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition card-concert">
+                        <div class="h-40 bg-[#003D82] relative overflow-hidden flex items-center justify-center">
+                            @if($konser->poster)
+                                <img src="{{ asset('storage/' . $konser->poster) }}" alt="{{ $konser->nama_konser }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="absolute inset-0 bg-gradient-to-br from-[#003D82] to-[#FF6600] opacity-50"></div>
+                                <i class="fas fa-music text-white text-5xl z-10 opacity-30"></i>
+                            @endif
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg text-gray-800 mb-2">{{ $konser->nama_konser }}</h3>
+                            <div class="space-y-2 text-sm text-gray-600 mb-4">
+                                <p><i class="fas fa-calendar text-[#FF6600] mr-2"></i>{{ \Carbon\Carbon::parse($konser->tanggal_konser)->format('d F Y') }}</p>
+                                <p><i class="fas fa-map-marker-alt text-[#FF6600] mr-2"></i>{{ $konser->lokasi }}</p>
+                                <p><i class="fas fa-clock text-[#FF6600] mr-2"></i>{{ \Carbon\Carbon::parse($konser->waktu_konser)->format('H:i') }} WIB</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <a href="{{ route('concert.detail', $konser->id) }}" class="flex-1 text-center btn-primary text-sm py-2">Lihat Detail</a>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     <!-- Tab Content: History -->
     <div id="history-tab" class="tab-content hidden">
-        <div class="space-y-4">
-            @for($i = 1; $i <= 5; $i++)
-                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-[#003D82] hover:shadow-lg transition">
-                    <div class="flex justify-between items-start">
-                        <div class="flex-1">
-                            <h3 class="font-bold text-lg text-gray-800 mb-2">Konser Legend</h3>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-3">
-                                <p><i class="fas fa-calendar mr-2"></i>15 Mei 2026</p>
-                                <p><i class="fas fa-map-marker-alt mr-2"></i>Surabaya</p>
-                                <p><i class="fas fa-ticket-alt mr-2"></i>2 Tiket</p>
-                                <p><i class="fas fa-credit-card mr-2"></i>Rp 500.000</p>
+        @if($transaksi->isEmpty())
+            <div class="bg-white rounded-xl shadow-md p-8 text-center border border-gray-100">
+                <div class="text-gray-400 text-5xl mb-4">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h3 class="font-bold text-lg text-gray-800 mb-2">Belum Ada Riwayat Transaksi</h3>
+                <p class="text-gray-600 mb-6">Semua transaksi pemesanan tiket Anda akan muncul di sini.</p>
+                <a href="{{ route('home') }}" class="btn-primary inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white font-bold transition shadow hover:shadow-md">
+                    <i class="fas fa-ticket-alt"></i> Pesan Tiket Sekarang
+                </a>
+            </div>
+        @else
+            <div class="space-y-4">
+                @foreach($transaksi as $t)
+                    @php
+                        $firstPemesanan = $t->pemesanan->first();
+                        $konser = $firstPemesanan?->kategoriTiket?->konser;
+                        $totalTiketCount = $t->pemesanan->sum('jumlah_tiket');
+                        $status = strtolower($t->status_transaksi);
+                    @endphp
+                    <div class="bg-white rounded-xl shadow-md p-6 border-l-4 @if($status == 'completed' || $status == 'berhasil') border-green-500 @elseif($status == 'pending' || $status == 'pending_payment') border-orange-500 @else border-red-500 @endif hover:shadow-lg transition">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h3 class="font-bold text-lg text-gray-800">{{ $konser?->nama_konser ?? 'Transaksi #' . $t->kode_transaksi }}</h3>
+                                    <span class="text-xs text-gray-500">({{ $t->kode_transaksi }})</span>
+                                </div>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-3">
+                                    <p><i class="fas fa-calendar mr-2"></i>{{ \Carbon\Carbon::parse($t->tanggal_transaksi)->format('d M Y') }}</p>
+                                    <p><i class="fas fa-map-marker-alt mr-2"></i>{{ $konser?->lokasi ?? '-' }}</p>
+                                    <p><i class="fas fa-ticket-alt mr-2"></i>{{ $totalTiketCount }} Tiket</p>
+                                    <p><i class="fas fa-credit-card mr-2"></i>Rp {{ number_format($t->total_harga, 0, ',', '.') }}</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="text-right">
-                            @if($i == 1)
-                                <span class="badge-orange mb-2">Selesai</span>
-                            @else
-                                <span class="inline-block bg-blue-100 text-[#003D82] px-3 py-1 rounded-full text-xs font-semibold mb-2">Selesai</span>
-                            @endif
-                            <div class="flex gap-2">
-                                <button class="text-[#003D82] hover:text-[#FF6600] transition">
-                                    <i class="fas fa-download"></i> Download
-                                </button>
-                                <button class="text-gray-400 hover:text-gray-600 transition">
-                                    <i class="fas fa-ellipsis-h"></i>
-                                </button>
+                            <div class="text-left md:text-right flex flex-col items-start md:items-end gap-2">
+                                @if($status == 'completed' || $status == 'berhasil')
+                                    <span class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Selesai</span>
+                                @elseif($status == 'pending' || $status == 'pending_payment')
+                                    <span class="inline-block bg-orange-100 text-[#FF6600] px-3 py-1 rounded-full text-xs font-semibold">Menunggu Pembayaran</span>
+                                @else
+                                    <span class="inline-block bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">Dibatalkan</span>
+                                @endif
+                                
+                                <div class="flex gap-2 mt-2">
+                                    @if($status == 'pending')
+                                        <a href="{{ route('payment.select-method', ['transaksi_id' => $t->id]) }}" class="bg-[#FF6600] hover:bg-orange-600 text-white text-xs font-bold px-4 py-2 rounded-lg transition flex items-center gap-1 shadow-md">
+                                            <i class="fas fa-credit-card"></i> Lanjutkan Pembayaran
+                                        </a>
+                                    @elseif($status == 'pending_payment')
+                                        <a href="{{ route('payment.index', ['transaksi_id' => $t->id]) }}" class="bg-[#FF6600] hover:bg-orange-600 text-white text-xs font-bold px-4 py-2 rounded-lg transition flex items-center gap-1 shadow-md">
+                                            <i class="fas fa-credit-card"></i> Lanjutkan Pembayaran
+                                        </a>
+                                    @elseif($status == 'completed' || $status == 'berhasil')
+                                        @php
+                                            $firstTicket = $firstPemesanan?->tiket?->first();
+                                        @endphp
+                                        @if($firstTicket)
+                                            <a href="{{ route('ticket.download', $firstTicket->id) }}" class="text-[#003D82] hover:text-[#FF6600] text-sm font-semibold transition flex items-center gap-1">
+                                                <i class="fas fa-download"></i> Download Tiket
+                                            </a>
+                                        @endif
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
+                @endforeach
+                
+                <div class="mt-6">
+                    {{ $transaksi->links() }}
                 </div>
-            @endfor
-        </div>
+            </div>
+        @endif
     </div>
 
     <!-- Tab Content: Settings -->
@@ -158,26 +234,33 @@ Dashboard - ShowTix
                 <div class="bg-white rounded-xl shadow-md p-6 mb-6">
                     <h2 class="font-bold text-2xl text-gray-800 mb-6 pb-4 border-b">Profil Anda</h2>
                     
-                    <form class="space-y-4">
+                    <form action="{{ route('profile.update') }}" method="POST" class="space-y-4">
+                        @csrf
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap</label>
-                                <input type="text" value="{{ auth()->user()->name }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#003D82]">
+                                <input type="text" name="name" value="{{ old('name', auth()->user()->name) }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#003D82]" required>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
-                                <input type="email" value="{{ auth()->user()->email }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#003D82]">
+                                <input type="email" name="email" value="{{ old('email', auth()->user()->email) }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#003D82]" required>
                             </div>
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">No. Telepon</label>
-                            <input type="tel" placeholder="081234567890" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#003D82]">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">No. Telepon</label>
+                                <input type="tel" name="no_hp" value="{{ old('no_hp', auth()->user()->pembeli?->no_hp) }}" placeholder="081234567890" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#003D82]" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Lahir</label>
+                                <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', auth()->user()->pembeli?->tanggal_lahir?->format('Y-m-d')) }}" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#003D82]" required>
+                            </div>
                         </div>
 
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Alamat</label>
-                            <textarea rows="3" placeholder="Alamat lengkap Anda" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#003D82]"></textarea>
+                            <textarea name="alamat" rows="3" placeholder="Alamat lengkap Anda" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#003D82]" required>{{ old('alamat', auth()->user()->pembeli?->alamat) }}</textarea>
                         </div>
 
                         <button type="submit" class="btn-primary">
@@ -266,11 +349,23 @@ Dashboard - ShowTix
         });
 
         // Show selected tab
-        document.getElementById(tabName + '-tab').classList.remove('hidden');
+        const targetTab = document.getElementById(tabName + '-tab');
+        if (targetTab) {
+            targetTab.classList.remove('hidden');
+        }
 
-        // Add active state to clicked button
-        event.target.closest('.tab-button').classList.add('border-[#003D82]', 'text-[#003D82]');
-        event.target.closest('.tab-button').classList.remove('border-transparent', 'text-gray-600');
+        // Add active state to matching button
+        const activeBtn = document.querySelector(`.tab-button[onclick*="'${tabName}'"]`) || document.querySelector(`.tab-button[onclick*='"${tabName}"']`);
+        if (activeBtn) {
+            activeBtn.classList.add('border-[#003D82]', 'text-[#003D82]');
+            activeBtn.classList.remove('border-transparent', 'text-gray-600');
+        }
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab') || 'upcoming';
+        switchTab(tab);
+    });
 </script>
 @endpush

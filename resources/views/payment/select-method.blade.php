@@ -35,15 +35,15 @@ Pilih Metode Pembayaran - ShowTix
                         <button type="button" onclick="selectPaymentMethod('bnc')" class="payment-method-btn w-full group">
                             <div class="flex items-center justify-between p-4 border-2 border-gray-300 rounded-xl hover:border-[#003D82] hover:bg-blue-50 transition duration-300">
                                 <div class="flex items-center gap-4 flex-1">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center flex-shrink-0">
-                                        <i class="fas fa-university text-white text-lg"></i>
+                                    <div class="w-14 h-14 bg-white rounded-lg flex items-center justify-center flex-shrink-0 border border-gray-200 p-1 overflow-hidden">
+                                        <img src="https://bankneocommerce.co.id/wp-content/uploads/2022/06/logo-bnc-new.png" alt="BNC" class="w-full h-full object-contain" onerror="this.onerror=null;this.parentElement.innerHTML='<span class=\'font-bold text-blue-700 text-xs\'>BNC</span>'">
                                     </div>
                                     <div class="text-left">
                                         <h3 class="font-bold text-gray-900 group-hover:text-[#003D82]">BNC</h3>
-                                        <p class="text-sm text-gray-500">Bank Nasional Indonesia</p>
+                                        <p class="text-sm text-gray-500">Bank Neo Commerce</p>
                                     </div>
                                 </div>
-                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-[#003D82]"></div>
+                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-[#003D82] transition-all duration-300 flex items-center justify-center radio-indicator"></div>
                             </div>
                         </button>
 
@@ -51,31 +51,31 @@ Pilih Metode Pembayaran - ShowTix
                         <button type="button" onclick="selectPaymentMethod('sinarmas')" class="payment-method-btn w-full group">
                             <div class="flex items-center justify-between p-4 border-2 border-gray-300 rounded-xl hover:border-[#003D82] hover:bg-blue-50 transition duration-300">
                                 <div class="flex items-center gap-4 flex-1">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-red-600 to-red-700 rounded-lg flex items-center justify-center flex-shrink-0">
-                                        <i class="fas fa-credit-card text-white text-lg"></i>
+                                    <div class="w-14 h-14 bg-white rounded-lg flex items-center justify-center flex-shrink-0 border border-gray-200 p-1 overflow-hidden">
+                                        <img src="https://upload.wikimedia.org/wikipedia/id/thumb/f/fa/Bank_Sinarmas_logo.svg/1200px-Bank_Sinarmas_logo.svg.png" alt="Sinarmas" class="w-full h-full object-contain" onerror="this.onerror=null;this.parentElement.innerHTML='<span class=\'font-bold text-red-700 text-xs\'>Sinarmas</span>'">
                                     </div>
                                     <div class="text-left">
                                         <h3 class="font-bold text-gray-900 group-hover:text-[#003D82]">Sinarmas</h3>
                                         <p class="text-sm text-gray-500">Bank Sinarmas</p>
                                     </div>
                                 </div>
-                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-[#003D82]"></div>
+                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-[#003D82] transition-all duration-300 flex items-center justify-center radio-indicator"></div>
                             </div>
                         </button>
 
-                        <!-- QR Payment -->
+                        <!-- QRIS Payment -->
                         <button type="button" onclick="selectPaymentMethod('qr')" class="payment-method-btn w-full group">
                             <div class="flex items-center justify-between p-4 border-2 border-gray-300 rounded-xl hover:border-[#003D82] hover:bg-blue-50 transition duration-300">
                                 <div class="flex items-center gap-4 flex-1">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-700 rounded-lg flex items-center justify-center flex-shrink-0">
-                                        <i class="fas fa-qrcode text-white text-lg"></i>
+                                    <div class="w-14 h-14 bg-white rounded-lg flex items-center justify-center flex-shrink-0 border border-gray-200 p-1 overflow-hidden">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/QRIS_logo.svg/1200px-QRIS_logo.svg.png" alt="QRIS" class="w-full h-full object-contain" onerror="this.onerror=null;this.parentElement.innerHTML='<span class=\'font-bold text-purple-700 text-xs\'>QRIS</span>'">
                                     </div>
                                     <div class="text-left">
-                                        <h3 class="font-bold text-gray-900 group-hover:text-[#003D82]">QR Payment</h3>
+                                        <h3 class="font-bold text-gray-900 group-hover:text-[#003D82]">QRIS</h3>
                                         <p class="text-sm text-gray-500">Scan QRIS dari smartphone</p>
                                     </div>
                                 </div>
-                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-[#003D82]"></div>
+                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-[#003D82] transition-all duration-300 flex items-center justify-center radio-indicator"></div>
                             </div>
                         </button>
 
@@ -83,15 +83,15 @@ Pilih Metode Pembayaran - ShowTix
                         <button type="button" onclick="selectPaymentMethod('mandiri')" class="payment-method-btn w-full group">
                             <div class="flex items-center justify-between p-4 border-2 border-gray-300 rounded-xl hover:border-[#003D82] hover:bg-blue-50 transition duration-300">
                                 <div class="flex items-center gap-4 flex-1">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-yellow-600 to-yellow-700 rounded-lg flex items-center justify-center flex-shrink-0">
-                                        <i class="fas fa-university text-white text-lg"></i>
+                                    <div class="w-14 h-14 bg-white rounded-lg flex items-center justify-center flex-shrink-0 border border-gray-200 p-1 overflow-hidden">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Bank_Mandiri_logo_2016.svg/1200px-Bank_Mandiri_logo_2016.svg.png" alt="Mandiri" class="w-full h-full object-contain" onerror="this.onerror=null;this.parentElement.innerHTML='<span class=\'font-bold text-blue-800 text-xs\'>Mandiri</span>'">
                                     </div>
                                     <div class="text-left">
                                         <h3 class="font-bold text-gray-900 group-hover:text-[#003D82]">Mandiri</h3>
-                                        <p class="text-sm text-gray-500">Bank Mandiri</p>
+                                        <p class="text-sm text-gray-500">Bank Mandiri - Virtual Account</p>
                                     </div>
                                 </div>
-                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-[#003D82]"></div>
+                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-[#003D82] transition-all duration-300 flex items-center justify-center radio-indicator"></div>
                             </div>
                         </button>
 
@@ -99,15 +99,15 @@ Pilih Metode Pembayaran - ShowTix
                         <button type="button" onclick="selectPaymentMethod('bri_va')" class="payment-method-btn w-full group">
                             <div class="flex items-center justify-between p-4 border-2 border-gray-300 rounded-xl hover:border-[#003D82] hover:bg-blue-50 transition duration-300">
                                 <div class="flex items-center gap-4 flex-1">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center flex-shrink-0">
-                                        <i class="fas fa-wallet text-white text-lg"></i>
+                                    <div class="w-14 h-14 bg-white rounded-lg flex items-center justify-center flex-shrink-0 border border-gray-200 p-1 overflow-hidden">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/BANK_BRI_logo.svg/1200px-BANK_BRI_logo.svg.png" alt="BRI" class="w-full h-full object-contain" onerror="this.onerror=null;this.parentElement.innerHTML='<span class=\'font-bold text-blue-600 text-xs\'>BRI</span>'">
                                     </div>
                                     <div class="text-left">
                                         <h3 class="font-bold text-gray-900 group-hover:text-[#003D82]">BRI Virtual Account</h3>
                                         <p class="text-sm text-gray-500">Bank BRI - Virtual Account</p>
                                     </div>
                                 </div>
-                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-[#003D82]"></div>
+                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-[#003D82] transition-all duration-300 flex items-center justify-center radio-indicator"></div>
                             </div>
                         </button>
 
@@ -115,15 +115,15 @@ Pilih Metode Pembayaran - ShowTix
                         <button type="button" onclick="selectPaymentMethod('permata')" class="payment-method-btn w-full group">
                             <div class="flex items-center justify-between p-4 border-2 border-gray-300 rounded-xl hover:border-[#003D82] hover:bg-blue-50 transition duration-300">
                                 <div class="flex items-center gap-4 flex-1">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-lg flex items-center justify-center flex-shrink-0">
-                                        <i class="fas fa-university text-white text-lg"></i>
+                                    <div class="w-14 h-14 bg-white rounded-lg flex items-center justify-center flex-shrink-0 border border-gray-200 p-1 overflow-hidden">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/PermataBank_logo.svg/1200px-PermataBank_logo.svg.png" alt="Permata" class="w-full h-full object-contain" onerror="this.onerror=null;this.parentElement.innerHTML='<span class=\'font-bold text-indigo-700 text-xs\'>Permata</span>'">
                                     </div>
                                     <div class="text-left">
                                         <h3 class="font-bold text-gray-900 group-hover:text-[#003D82]">Permata</h3>
-                                        <p class="text-sm text-gray-500">Bank Permata</p>
+                                        <p class="text-sm text-gray-500">Bank Permata - Virtual Account</p>
                                     </div>
                                 </div>
-                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-[#003D82]"></div>
+                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-[#003D82] transition-all duration-300 flex items-center justify-center radio-indicator"></div>
                             </div>
                         </button>
 
@@ -131,15 +131,15 @@ Pilih Metode Pembayaran - ShowTix
                         <button type="button" onclick="selectPaymentMethod('bni')" class="payment-method-btn w-full group">
                             <div class="flex items-center justify-between p-4 border-2 border-gray-300 rounded-xl hover:border-[#003D82] hover:bg-blue-50 transition duration-300">
                                 <div class="flex items-center gap-4 flex-1">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-orange-600 to-orange-700 rounded-lg flex items-center justify-center flex-shrink-0">
-                                        <i class="fas fa-university text-white text-lg"></i>
+                                    <div class="w-14 h-14 bg-white rounded-lg flex items-center justify-center flex-shrink-0 border border-gray-200 p-1 overflow-hidden">
+                                        <img src="https://upload.wikimedia.org/wikipedia/id/thumb/5/55/BNI_logo.svg/1200px-BNI_logo.svg.png" alt="BNI" class="w-full h-full object-contain" onerror="this.onerror=null;this.parentElement.innerHTML='<span class=\'font-bold text-orange-600 text-xs\'>BNI</span>'">
                                     </div>
                                     <div class="text-left">
                                         <h3 class="font-bold text-gray-900 group-hover:text-[#003D82]">BNI</h3>
                                         <p class="text-sm text-gray-500">Bank Negara Indonesia</p>
                                     </div>
                                 </div>
-                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-[#003D82]"></div>
+                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-[#003D82] transition-all duration-300 flex items-center justify-center radio-indicator"></div>
                             </div>
                         </button>
 
@@ -147,15 +147,15 @@ Pilih Metode Pembayaran - ShowTix
                         <button type="button" onclick="selectPaymentMethod('muamalat')" class="payment-method-btn w-full group">
                             <div class="flex items-center justify-between p-4 border-2 border-gray-300 rounded-xl hover:border-[#003D82] hover:bg-blue-50 transition duration-300">
                                 <div class="flex items-center gap-4 flex-1">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-green-600 to-green-700 rounded-lg flex items-center justify-center flex-shrink-0">
-                                        <i class="fas fa-mosque text-white text-lg"></i>
+                                    <div class="w-14 h-14 bg-white rounded-lg flex items-center justify-center flex-shrink-0 border border-gray-200 p-1 overflow-hidden">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Bank_Muamalat_Logo.svg/1200px-Bank_Muamalat_Logo.svg.png" alt="Muamalat" class="w-full h-full object-contain" onerror="this.onerror=null;this.parentElement.innerHTML='<span class=\'font-bold text-green-700 text-xs\'>Muamalat</span>'">
                                     </div>
                                     <div class="text-left">
                                         <h3 class="font-bold text-gray-900 group-hover:text-[#003D82]">Muamalat</h3>
                                         <p class="text-sm text-gray-500">Bank Muamalat Indonesia</p>
                                     </div>
                                 </div>
-                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-[#003D82]"></div>
+                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-[#003D82] transition-all duration-300 flex items-center justify-center radio-indicator"></div>
                             </div>
                         </button>
                     </div>

@@ -46,12 +46,12 @@
         <div class="flex justify-between items-center pt-4 border-t border-gray-200">
             <div>
                 <p class="text-xs text-gray-500">Mulai dari</p>
-                <p class="text-lg font-bold text-secondary-900">
+                <p class="text-lg font-bold text-[#003D82]">
                     Rp {{ number_format($concert->kategoriTiket->min('harga'), 0, ',', '.') }}
                 </p>
             </div>
-            <a href="{{ route('concert.detail', $concert->id) }}" class="px-4 py-2 bg-secondary-900 text-white rounded-lg hover:bg-secondary-800 transition-colors text-sm font-semibold">
-                Lihat Detail
+            <a href="{{ route('concert.detail', $concert->id) }}" class="px-4 py-2 bg-[#003D82] text-white rounded-lg hover:bg-[#002b5c] transition-colors text-sm font-semibold">
+                Pesan
             </a>
         </div>
     </div>

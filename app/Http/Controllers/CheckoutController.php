@@ -14,7 +14,6 @@ class CheckoutController extends Controller
     public function __construct(CheckoutService $checkoutService)
     {
         $this->checkoutService = $checkoutService;
-        $this->middleware('auth');
     }
 
     /**
@@ -69,7 +68,7 @@ class CheckoutController extends Controller
 
             return redirect()
                 ->route('payment.select-method', ['transaksi_id' => $transaksi->id])
-                ->with('success' => 'Checkout berhasil, pilih metode pembayaran');
+                ->with('success', 'Checkout berhasil, pilih metode pembayaran');
 
         } catch (\Exception $e) {
             if ($request->wantsJson()) {

@@ -65,7 +65,7 @@
                         </div>
 
                         <!-- CTA Button -->
-                        <button onclick="scrollToTickets()" class="w-full px-6 py-3 bg-secondary-900 text-white rounded-lg hover:bg-secondary-800 transition-colors font-semibold text-lg">
+                        <button onclick="scrollToTickets()" class="w-full px-6 py-3 bg-[#FF6600] text-white rounded-lg hover:bg-orange-600 transition-colors font-semibold text-lg">
                             Pesan Tiket
                         </button>
                     </div>
@@ -126,7 +126,7 @@
                         </div>
 
                         <!-- Add to Cart Button -->
-                        <button onclick="addToCart()" class="w-full mt-6 px-6 py-4 bg-secondary-900 text-white rounded-lg hover:bg-secondary-800 transition-colors font-semibold text-lg">
+                        <button onclick="addToCart()" class="w-full mt-6 px-6 py-4 bg-[#003D82] text-white rounded-lg hover:bg-blue-800 transition-colors font-semibold text-lg">
                             <svg class="inline-block w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                             </svg>
@@ -168,8 +168,8 @@
                     </div>
 
                     <button id="checkout-btn" onclick="goToCheckout()" disabled
-                            class="w-full px-4 py-3 bg-secondary-900 text-white rounded-lg hover:bg-secondary-800 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
-                        Lanjut Ke Pembayaran
+                            class="w-full mt-4 px-4 py-3 bg-[#FF6600] text-white rounded-lg hover:bg-orange-600 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed text-center">
+                        Lanjutkan Pembayaran
                     </button>
                 </div>
             </div>

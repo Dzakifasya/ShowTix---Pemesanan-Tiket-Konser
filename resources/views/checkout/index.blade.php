@@ -130,15 +130,15 @@ Checkout - ShowTix
                     <a href="{{ route('home') }}" class="flex-1 px-6 py-4 border-2 border-primary-900 text-primary-900 rounded-lg hover:bg-gray-50 transition-colors font-semibold text-center">
                         Batal
                     </a>
-                    <button type="submit" class="flex-1 px-6 py-4 bg-secondary-900 text-white rounded-lg hover:bg-secondary-800 transition-colors font-semibold">
-                        Lanjut ke Pembayaran
+                    <button type="submit" class="flex-1 px-6 py-4 bg-[#FF6600] text-white rounded-lg hover:bg-orange-600 transition-colors font-semibold">
+                        Lanjutkan Pembayaran
                     </button>
                 </div>
             </form>
         @else
             <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
                 <p class="text-yellow-800 font-semibold mb-4">Keranjang Anda kosong</p>
-                <a href="{{ route('home') }}" class="inline-block px-6 py-3 bg-secondary-900 text-white rounded-lg hover:bg-secondary-800 transition-colors">
+                <a href="{{ route('home') }}" class="inline-block px-6 py-3 bg-[#FF6600] text-white rounded-lg hover:bg-orange-600 transition-colors">
                     Kembali ke Beranda
                 </a>
             </div>

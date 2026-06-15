@@ -30,8 +30,8 @@ class HomeController extends Controller
         // Get recommended concerts (most popular by orders)
         $recommendedConcerts = Konser::where('status_konser', 'aktif')
             ->with(['artis', 'kategoriTiket'])
+            ->has('pemesanan')
             ->withCount('pemesanan')
-            ->having('pemesanan_count', '>', 0)
             ->orderByDesc('pemesanan_count')
             ->take(6)
             ->get();
