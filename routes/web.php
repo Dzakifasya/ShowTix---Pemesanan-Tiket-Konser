@@ -45,6 +45,8 @@ Route::middleware('auth')->group(function () {
 
     // Payment Routes
     Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
+    Route::get('/payment/select-method', [PaymentController::class, 'selectMethod'])->name('payment.select-method');
+    Route::post('/payment/process/{method}', [PaymentController::class, 'process'])->name('payment.process');
     Route::post('/payment/verify', [PaymentController::class, 'verify'])->name('payment.verify');
     Route::get('/payment/status', [PaymentController::class, 'getStatus'])->name('payment.status');
     Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');

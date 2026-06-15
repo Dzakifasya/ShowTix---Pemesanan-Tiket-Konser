@@ -11,9 +11,17 @@ class Pembeli extends Model
     protected $fillable = [
         'user_id',
         'nama_lengkap',
+        'email',
+        'no_whatsapp',
         'no_hp',
         'alamat',
+        'jenis_kelamin',
+        'provinsi',
         'tanggal_lahir',
+    ];
+
+    protected $casts = [
+        'tanggal_lahir' => 'date',
     ];
 
     public function user(): BelongsTo

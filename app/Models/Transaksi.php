@@ -12,6 +12,12 @@ class Transaksi extends Model
         'tanggal_transaksi',
         'total_harga',
         'status_transaksi',
+        'expired_at',
+    ];
+
+    protected $casts = [
+        'tanggal_transaksi' => 'datetime',
+        'expired_at' => 'datetime',
     ];
 
     public function pembeli()

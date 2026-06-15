@@ -25,28 +25,30 @@ class CartController extends Controller
         $cartCount = session('cart_count', 0);
 
         // Enrich cart items with current concert info (in case it changed)
-        $enrichedItems = [];
+        $cartItems = [];
         $totalPrice = 0;
 
-        foreach ($cartItems as $key => $item) {
+        foreach (session('cart', []) as $key => $item) {
             $kategoriTiket = KategoriTiket::with('konser')->find($item['kategori_tiket_id']);
 
             if ($kategoriTiket) {
-                $enrichedItem = [
-                    'key' => $key,
-                    'konser' => $kategoriTiket->konser,
-                    'kategori' => $kategoriTiket,
+                $cartItems[] = [
+                    'id' => $key,
+                    'konser_nama' => $kategoriTiket->konser->nama_konser,
+                    'tanggal_konser' => $kategoriTiket->konser->tanggal_konser,
+                    'lokasi' => $kategoriTiket->konser->lokasi,
+                    'poster' => $kategoriTiket->konser->poster,
+                    'kategori_nama' => $kategoriTiket->nama_kategori,
                     'jumlah_tiket' => $item['jumlah_tiket'],
                     'harga_satuan' => $item['harga_satuan'],
                     'subtotal' => $item['subtotal'],
                 ];
 
-                $enrichedItems[] = $enrichedItem;
                 $totalPrice += $item['subtotal'];
             }
         }
 
-        return view('cart.index', compact('enrichedItems', 'cartCount', 'totalPrice'));
+        return view('cart.index', compact('cartItems', 'cartCount', 'totalPrice'));
     }
 
     /**
@@ -189,9 +191,5 @@ class CartController extends Controller
             'ticket_count' => $ticketCount,
             'total_price' => $totalPrice,
         ]);
-    }
-}
-        session(['cart_count' => 0]);
-        return redirect()->route('home')->with('success', 'Keranjang berhasil dikosongkan');
     }
 }

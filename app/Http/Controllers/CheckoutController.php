@@ -63,13 +63,13 @@ class CheckoutController extends Controller
                     'success' => true,
                     'message' => 'Checkout berhasil',
                     'transaksi_id' => $transaksi->id,
-                    'redirect_url' => route('payment.index', ['transaksi_id' => $transaksi->id]),
+                    'redirect_url' => route('payment.select-method', ['transaksi_id' => $transaksi->id]),
                 ]);
             }
 
             return redirect()
-                ->route('payment.index', ['transaksi_id' => $transaksi->id])
-                ->with('success', 'Checkout berhasil, lanjutkan ke pembayaran');
+                ->route('payment.select-method', ['transaksi_id' => $transaksi->id])
+                ->with('success' => 'Checkout berhasil, pilih metode pembayaran');
 
         } catch (\Exception $e) {
             if ($request->wantsJson()) {
@@ -79,53 +79,6 @@ class CheckoutController extends Controller
                 ], 500);
             }
 
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
-        }
-    }
-}
-
-            $adminFee = $subtotal * 0.025;
-            $serviceFee = 10000;
-            $totalAmount = $subtotal + $adminFee + $serviceFee;
-
-            // Create transaction
-            $transaksi = Transaksi::create([
-                'pembeli_id' => $pembeli->id,
-                'total_harga' => $totalAmount,
-                'status_transaksi' => 'pending',
-                'metode_pembayaran' => $validated['metode_pembayaran'],
-                'no_referensi' => 'TXN' . str_pad(Transaksi::max('id') + 1, 8, '0', STR_PAD_LEFT),
-            ]);
-
-            // Create orders for each cart item
-            foreach ($cartItems as $item) {
-                $pemesanan = Pemesanan::create([
-                    'transaksi_id' => $transaksi->id,
-                    'kategori_tiket_id' => $item['kategori_tiket_id'],
-                    'jumlah_tiket' => $item['jumlah_tiket'],
-                    'harga_satuan' => $item['harga_satuan'],
-                    'subtotal' => $item['subtotal'],
-                ]);
-
-                // Generate tickets
-                for ($i = 0; $i < $item['jumlah_tiket']; $i++) {
-                    Tiket::create([
-                        'pemesanan_id' => $pemesanan->id,
-                        'kode_tiket' => 'TKT' . strtoupper(Str::random(10)),
-                        'status_tiket' => 'pending',
-                    ]);
-                }
-            }
-
-            // Clear cart and redirect to payment
-            session(['cart' => []]);
-            session(['cart_count' => 0]);
-            session(['transaksi_id' => $transaksi->id]);
-            session(['checkout_data' => $validated]);
-
-            return redirect()->route('payment')->with('success', 'Silakan selesaikan pembayaran Anda');
-
-        } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }

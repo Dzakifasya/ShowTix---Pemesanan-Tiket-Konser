@@ -10,11 +10,6 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Display payment page
      */
@@ -198,6 +193,131 @@ class PaymentController extends Controller
         \Log::info('Payment Webhook Received', $request->all());
 
         return response()->json(['status' => 'ok']);
+    }
+
+    /**
+     * Display payment method selection page
+     */
+    public function selectMethod(Request $request)
+    {
+        $transaksiId = $request->query('transaksi_id');
+
+        $transaksi = Transaksi::with([
+            'pembeli',
+            'pembeli.user',
+            'pemesanan.kategoriTiket.konser'
+        ])->findOrFail($transaksiId);
+
+        // Check if user owns this transaction
+        if ($transaksi->pembeli->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak berhak mengakses halaman ini');
+        }
+
+        // Check if payment already processed
+        if ($transaksi->status_transaksi === 'completed') {
+            return redirect()->route('payment.success', ['transaksi_id' => $transaksiId]);
+        }
+
+        // Check if payment expired
+        if (PaymentService::isPaymentExpired($transaksi)) {
+            return redirect()->route('home')
+                ->with('error', 'Waktu pembayaran telah habis. Silakan pesan kembali.');
+        }
+
+        // Get cart items from transaksi
+        $cartItems = [];
+        $subtotal = 0;
+        $serviceFee = 3000;
+        
+        foreach ($transaksi->pemesanan as $pemesanan) {
+            $itemSubtotal = $pemesanan->harga_satuan * $pemesanan->jumlah_tiket;
+            $cartItems[] = [
+                'konser_nama' => $pemesanan->kategoriTiket->konser->nama_konser,
+                'kategori_nama' => $pemesanan->kategoriTiket->nama_kategori,
+                'jumlah_tiket' => $pemesanan->jumlah_tiket,
+                'harga_satuan' => $pemesanan->harga_satuan,
+                'subtotal' => $itemSubtotal,
+            ];
+            $subtotal += $itemSubtotal;
+        }
+
+        $grandTotal = $subtotal + $serviceFee;
+
+        return view('payment.select-method', [
+            'cartItems' => $cartItems,
+            'subtotal' => $subtotal,
+            'serviceFee' => $serviceFee,
+            'grandTotal' => $grandTotal,
+            'phone' => $transaksi->pembeli->no_hp ?? '',
+            'transactionCode' => 'TXN' . str_pad($transaksi->id, 6, '0', STR_PAD_LEFT),
+            'transaksi' => $transaksi,
+        ]);
+    }
+
+    /**
+     * Process payment with selected method
+     */
+    public function process(Request $request, $method)
+    {
+        // Get transaksi_id from query parameter, POST data, or session
+        $transaksiId = $request->query('transaksi_id') 
+                    ?? $request->post('transaksi_id')
+                    ?? session('last_transaksi_id');
+        
+        if (!$transaksiId) {
+            return redirect()->route('cart.index')
+                ->with('error', 'Data transaksi tidak ditemukan');
+        }
+
+        $transaksi = Transaksi::with('pembeli')->findOrFail($transaksiId);
+
+        // Check if user owns this transaction
+        if ($transaksi->pembeli->user_id !== auth()->id()) {
+            abort(403, 'Anda tidak berhak mengakses transaksi ini');
+        }
+
+        // Check if payment already processed
+        if ($transaksi->status_transaksi === 'completed') {
+            return redirect()->route('payment.success', ['transaksi_id' => $transaksiId]);
+        }
+
+        // Check if payment expired
+        if (PaymentService::isPaymentExpired($transaksi)) {
+            return redirect()->route('home')
+                ->with('error', 'Waktu pembayaran telah habis. Silakan pesan kembali.');
+        }
+
+        try {
+            // Create payment record
+            $serviceCharge = 3000;
+            $pembayaran = PaymentService::createPayment(
+                $transaksi,
+                $method,
+                $serviceCharge
+            );
+
+            // Format payment code
+            $formattedCode = PaymentService::formatPaymentCode(
+                $pembayaran->kode_pembayaran,
+                $method
+            );
+
+            // Store method in session for next step
+            session(['payment_method' => $method, 'transaksi_id' => $transaksiId]);
+
+            // Redirect to payment instruction page based on method
+            return redirect()->route('payment.index', ['transaksi_id' => $transaksiId])
+                ->with([
+                    'success' => true,
+                    'payment_method' => $method,
+                    'payment_code' => $formattedCode,
+                    'total_amount' => $transaksi->total_harga + $serviceCharge,
+                ]);
+
+        } catch (\Exception $e) {
+            return redirect()->route('payment.select-method', ['transaksi_id' => $transaksiId])
+                ->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
+        }
     }
 
     /**

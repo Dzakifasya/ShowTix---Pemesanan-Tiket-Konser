@@ -125,129 +125,14 @@ document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') searchConcerts();
 });
 </script>
-@endsection
-                <select class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#003D82] focus:ring-2 focus:ring-[#003D82] focus:ring-opacity-20">
-                    <option value="">Semua Kota</option>
-                    <option value="jakarta">Jakarta</option>
-                    <option value="surabaya">Surabaya</option>
-                    <option value="bandung">Bandung</option>
-                    <option value="medan">Medan</option>
-                </select>
-            </div>
 
-            <!-- Date Range -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Tanggal</label>
-                <input 
-                    type="date" 
-                    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-[#003D82] focus:ring-2 focus:ring-[#003D82] focus:ring-opacity-20"
-                >
-            </div>
-        </div>
+@if($latestConcerts->count() > 0)
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-12">
+        @foreach($latestConcerts as $concert)
+            @include('components.event-card', ['concert' => $concert])
+        @endforeach
     </div>
-</section>
-
-<!-- Featured Concerts Carousel Section -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="mb-8 flex justify-between items-center">
-        <div>
-            <h2 class="font-display font-bold text-4xl mb-2">Konser Terpopuler</h2>
-            <p class="text-gray-600">Konser-konser dengan penjualan tiket tertinggi</p>
-        </div>
-        <div class="flex gap-2">
-            <button onclick="carouselPrev()" class="btn-primary rounded-full w-12 h-12 flex items-center justify-center" title="Previous">
-                <i class="fas fa-chevron-left"></i>
-            </button>
-            <button onclick="carouselNext()" class="btn-primary rounded-full w-12 h-12 flex items-center justify-center" title="Next">
-                <i class="fas fa-chevron-right"></i>
-            </button>
-        </div>
-    </div>
-
-    <!-- Carousel Container -->
-    <div class="relative overflow-hidden bg-gray-50 rounded-2xl p-4">
-        <div id="carousel" class="flex gap-6 transition-transform duration-500 ease-out">
-            @forelse($konserTerpopuler ?? [] as $konser)
-                <div class="carousel-item flex-shrink-0 w-full md:w-1/2 lg:w-1/4">
-                    <div class="card-concert group cursor-pointer h-full flex flex-col">
-                        <!-- Image - Portrait Format -->
-                        <div class="relative overflow-hidden bg-gray-200 rounded-xl mb-4" style="aspect-ratio: 3/4;">
-                            @if($konser->poster)
-                                <img src="{{ asset('storage/' . $konser->poster) }}" alt="{{ $konser->nama_konser }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                            @else
-                                <div class="w-full h-full bg-gradient-to-br from-[#003D82] to-[#FF6600] flex items-center justify-center">
-                                    <i class="fas fa-music text-white text-5xl"></i>
-                                </div>
-                            @endif
-                            
-                            <!-- Status Badge -->
-                            @php
-                                $sisaTiket = $konser->kategoriTiket->sum('sisa_kuota');
-                            @endphp
-                            @if($sisaTiket > 0)
-                                <span class="badge-orange absolute top-3 right-3 text-sm">{{ $sisaTiket }} Tersedia</span>
-                            @else
-                                <span class="badge absolute top-3 right-3 bg-red-500 text-sm">Habis</span>
-                            @endif
-                        </div>
-
-                        <!-- Content -->
-                        <div class="flex-1 flex flex-col">
-                            <h3 class="font-bold text-lg mb-2 text-gray-800 group-hover:text-[#003D82] transition line-clamp-2">{{ $konser->nama_konser }}</h3>
-                            
-                            <!-- Artists -->
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                @foreach($konser->artis->take(2) as $artis)
-                                    <span class="text-xs badge-blue">{{ $artis->nama_artis }}</span>
-                                @endforeach
-                                @if($konser->artis->count() > 2)
-                                    <span class="text-xs text-gray-500">+{{ $konser->artis->count() - 2 }}</span>
-                                @endif
-                            </div>
-
-                            <!-- Date & Location -->
-                            <div class="text-sm text-gray-600 space-y-1 mb-4 flex-1">
-                                <p><i class="fas fa-calendar text-[#FF6600] mr-2"></i>{{ \Carbon\Carbon::parse($konser->tanggal_konser)->format('d M Y') }}</p>
-                                <p><i class="fas fa-map-marker-alt text-[#FF6600] mr-2"></i>{{ $konser->lokasi }}</p>
-                            </div>
-
-                            <!-- Price & Buttons -->
-                            <div class="pt-3 border-t space-y-2">
-                                <div>
-                                    <p class="text-xs text-gray-500">Mulai dari</p>
-                                    <p class="font-bold text-lg text-[#003D82]">Rp {{ number_format($konser->kategoriTiket->min('harga') ?? 0, 0, ',', '.') }}</p>
-                                </div>
-                                <div class="flex gap-2">
-                                    <a href="{{ route('concert.detail', $konser->id) }}" class="flex-1 btn-primary text-xs py-2 text-center rounded-lg transition-all hover:shadow-lg">
-                                        <i class="fas fa-ticket-alt mr-1"></i> Pesan
-                                    </a>
-                                    <button onclick="shareEvent({{ $konser->id }})" class="btn-outline-primary text-xs py-2 px-3 rounded-lg transition-all">
-                                        <i class="fas fa-share-alt"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <!-- Skeleton Loading -->
-                @for($i = 0; $i < 4; $i++)
-                    <div class="carousel-item flex-shrink-0 w-full md:w-1/2 lg:w-1/4">
-                        <div class="card-concert">
-                            <div class="bg-gray-200 shimmer rounded-xl mb-4" style="aspect-ratio: 3/4;"></div>
-                            <div class="space-y-3">
-                                <div class="h-4 bg-gray-200 shimmer rounded"></div>
-                                <div class="h-3 bg-gray-200 shimmer rounded w-2/3"></div>
-                                <div class="h-3 bg-gray-200 shimmer rounded"></div>
-                                <div class="h-10 bg-gray-200 shimmer rounded mt-4"></div>
-                            </div>
-                        </div>
-                    </div>
-                @endfor
-            @endforelse
-        </div>
-    </div>
-</section>
+@endif
 
 <!-- Upcoming Concerts Grid Section -->
 <section id="concerts" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

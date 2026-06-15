@@ -149,7 +149,7 @@ class FormValidationService
         if (!preg_match('/^[a-zA-Z\s\-\.\'àáâãäåèéêëìíîïòóôõöùúûüýÿœæÀÁÂÃÄÅÈÉÊËÌÍÎÏÒÓÔÕÖÙÚÛÜÝŸŒÆ]+$/', $trimmed)) {
             return [
                 'valid' => false,
-                'message' => 'Nama hanya boleh mengandung huruf, spasi, dan karakter khusus (-.\\')',
+                'message' => 'Nama hanya boleh mengandung huruf, spasi, dan karakter khusus (-, ., apostrop)',
             ];
         }
 
