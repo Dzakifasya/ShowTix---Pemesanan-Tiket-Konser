@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('pembelis', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('user')
+            $table->foreignId('user_id')
                 ->unique()
                 ->constrained()
                 ->cascadeOnDelete();

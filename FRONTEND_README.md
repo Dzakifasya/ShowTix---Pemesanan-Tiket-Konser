@@ -156,7 +156,7 @@ php artisan key:generate
 4. **Database Setup**
 ```bash
 php artisan migrate
-php artisan seed  # Optional: untuk dummy data
+php artisan migrate:fresh --seed  # Optional: untuk dummy data
 ```
 
 5. **Build Assets**
