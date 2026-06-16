@@ -41,6 +41,7 @@ Route::middleware('web')->group(function () {
 Route::middleware('auth')->group(function () {
     // Checkout Routes
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
 
     // Payment Routes
@@ -48,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/payment/select-method', [PaymentController::class, 'selectMethod'])->name('payment.select-method');
     Route::post('/payment/process/{method}', [PaymentController::class, 'process'])->name('payment.process');
     Route::post('/payment/verify', [PaymentController::class, 'verify'])->name('payment.verify');
+    Route::post('/payment/pay', [PaymentController::class, 'pay'])->name('payment.pay');
     Route::get('/payment/status', [PaymentController::class, 'getStatus'])->name('payment.status');
     Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
     Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');

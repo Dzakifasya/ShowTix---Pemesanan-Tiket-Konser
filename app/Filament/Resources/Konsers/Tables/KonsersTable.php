@@ -33,7 +33,8 @@ class KonsersTable
                 TextColumn::make('status_konser')
                     ->badge(),
 
-                ImageColumn::make('poster'),
+                ImageColumn::make('poster')
+                    ->disk('public'),
 
                 TextColumn::make('created_at')
                     ->dateTime('d M Y'),

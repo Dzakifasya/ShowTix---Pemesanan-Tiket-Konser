@@ -42,12 +42,16 @@ class HomeController extends Controller
         // Get cart count from session
         $cartCount = session('cart_count', 0);
 
+        // Align for Blade view variable names
+        $konserMendatang = $latestConcerts;
+
         return view('home', compact(
             'banners',
             'latestConcerts',
             'recommendedConcerts',
             'destinations',
-            'cartCount'
+            'cartCount',
+            'konserMendatang'
         ));
     }
 
@@ -79,10 +83,13 @@ class HomeController extends Controller
                          ->orderBy('tanggal_konser')
                          ->paginate(12);
 
+        // Assign to konser for search.blade.php
+        $konser = $concerts;
+
         if ($request->wantsJson()) {
             return response()->json($concerts);
         }
 
-        return view('search', compact('concerts', 'searchTerm', 'location'));
+        return view('search', compact('konser', 'searchTerm', 'location'));
     }
 }

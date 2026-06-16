@@ -21,6 +21,7 @@ class CheckoutService
             [
                 'nama_lengkap' => $data['nama_lengkap'],
                 'email' => $data['email'],
+                'no_hp' => $data['no_hp'] ?? $data['no_whatsapp'],
                 'no_whatsapp' => $data['no_whatsapp'],
                 'jenis_kelamin' => $data['jenis_kelamin'],
                 'provinsi' => $data['provinsi'],
@@ -56,8 +57,9 @@ class CheckoutService
                 'pembeli_id' => $pembeli->id,
                 'kode_transaksi' => $this->generateTransactionCode(),
                 'tanggal_transaksi' => now(),
+                'expired_at' => now()->addMinutes(15),
                 'total_harga' => $totalHarga,
-                'status_transaksi' => 'pending',
+                'status_transaksi' => 'Pending',
             ]);
 
             // Create pemesanan (orders) for each cart item
@@ -86,7 +88,7 @@ class CheckoutService
                     Tiket::create([
                         'pemesanan_id' => $pemesanan->id,
                         'kode_tiket' => $this->generateTicketCode($transaksi->id, $pemesanan->id, $i),
-                        'status_tiket' => 'pending',
+                        'status_tiket' => 'Aktif',
                     ]);
                 }
             }
@@ -141,11 +143,13 @@ class CheckoutService
             
             if ($kategoriTiket) {
                 $items[] = [
+                    'id' => $item['id'],
                     'konser_nama' => $kategoriTiket->konser->nama_konser,
                     'kategori_nama' => $kategoriTiket->nama_kategori,
                     'harga_satuan' => $item['harga_satuan'],
                     'jumlah_tiket' => $item['jumlah_tiket'],
                     'subtotal' => $item['subtotal'],
+                    'poster' => $kategoriTiket->konser->poster,
                 ];
 
                 $totalPrice += $item['subtotal'];

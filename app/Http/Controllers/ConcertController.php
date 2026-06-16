@@ -73,7 +73,7 @@ class ConcertController extends Controller
                 'tanggal' => $concert->tanggal_konser->format('d M Y'),
                 'waktu' => $concert->waktu_konser ? $concert->waktu_konser->format('H:i') : 'Belum ditentukan',
                 'lokasi' => $concert->lokasi,
-                'poster' => $concert->poster ? asset('storage/' . $concert->poster) : asset('images/placeholder.jpg'),
+                'poster' => $concert->poster ? asset('storage/' . $concert->poster) : null,
                 'artists' => $concert->artis->pluck('nama_artis')->implode(', '),
                 'minPrice' => $concert->kategoriTiket->min('harga'),
                 'totalTickets' => $concert->kategoriTiket->sum('sisa_kuota'),

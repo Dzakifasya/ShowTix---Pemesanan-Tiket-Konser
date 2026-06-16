@@ -140,11 +140,34 @@ class PaymentService
 
         // Update transaksi status
         $transaksi->update([
-            'status_transaksi' => 'pending_payment',
-            'expired_at' => now()->addMinutes(10),
+            'status_transaksi' => 'Pending',
+            'expired_at' => $transaksi->expired_at ?? now()->addMinutes(15),
         ]);
 
         return $pembayaran;
+    }
+
+    /**
+     * Expire transaction, update payment status, and restore ticket quota
+     */
+    public static function expireTransaction(Transaksi $transaksi)
+    {
+        if ($transaksi->status_transaksi !== 'Dibatalkan' && $transaksi->status_transaksi !== 'Berhasil') {
+            \DB::transaction(function () use ($transaksi) {
+                // Update transaction status to Dibatalkan
+                $transaksi->update(['status_transaksi' => 'Dibatalkan']);
+
+                // Update payment status to Gagal if it exists
+                if ($transaksi->pembayaran) {
+                    $transaksi->pembayaran->update(['status_pembayaran' => 'Gagal']);
+                }
+
+                // Restore ticket quota
+                foreach ($transaksi->pemesanan as $pemesanan) {
+                    $pemesanan->kategoriTiket()->increment('sisa_kuota', $pemesanan->jumlah_tiket);
+                }
+            });
+        }
     }
 
     /**
@@ -156,7 +179,7 @@ class PaymentService
         $expiry = $transaksi->expired_at;
 
         if ($expiry && $now < $expiry) {
-            return $expiry->diffInSeconds($now);
+            return $expiry->timestamp - $now->timestamp;
         }
 
         return 0;

@@ -15,9 +15,13 @@ class PaymentController extends Controller
      */
     public function index(Request $request)
     {
-        $transaksiId = $request->query('transaksi_id');
+        $transaksiId = $request->query('transaksi_id') ?? session('last_transaksi_id') ?? session('transaksi_id');
 
-        $transaksi = Transaksi::with(['pembeli', 'pemesanan.kategoriTiket.konser'])
+        if (!$transaksiId) {
+            return redirect()->route('home')->with('error', 'Transaksi tidak ditemukan');
+        }
+
+        $transaksi = Transaksi::with(['pembeli', 'pemesanan.kategoriTiket.konser', 'pembayaran'])
                              ->findOrFail($transaksiId);
 
         // Check if user owns this transaction
@@ -26,14 +30,24 @@ class PaymentController extends Controller
         }
 
         // Check if payment already processed
-        if ($transaksi->status_transaksi === 'completed') {
+        if (in_array($transaksi->status_transaksi, ['completed', 'Berhasil'])) {
             return redirect()->route('payment.success', ['transaksi_id' => $transaksiId]);
         }
 
         // Check if payment expired
         if (PaymentService::isPaymentExpired($transaksi)) {
-            return redirect()->route('home')
-                ->with('error', 'Waktu pembayaran telah habis. Silakan pesan kembali.');
+            PaymentService::expireTransaction($transaksi);
+            $transaksi->load('pembayaran');
+        } else {
+            // Ensure payment record exists
+            if (!$transaksi->pembayaran) {
+                $pembayaran = PaymentService::createPayment(
+                    $transaksi,
+                    session('payment_method') ?? 'bca_va',
+                    3000
+                );
+                $transaksi->load('pembayaran');
+            }
         }
 
         // Get payment methods
@@ -41,7 +55,7 @@ class PaymentController extends Controller
 
         // Calculate payment details
         $subtotal = $transaksi->total_harga;
-        $serviceCharge = 3000; // Fixed service charge
+        $serviceCharge = $transaksi->pembayaran?->biaya_layanan ?? 3000;
 
         // Get transaction details
         $items = $transaksi->pemesanan()->with('kategoriTiket.konser')->get();
@@ -157,7 +171,7 @@ class PaymentController extends Controller
      */
     public function getStatus(Request $request)
     {
-        $transaksiId = $request->query('transaksi_id');
+        $transaksiId = $request->query('transaksi_id') ?? session('last_transaksi_id') ?? session('transaksi_id');
 
         $transaksi = Transaksi::with('pembeli', 'pembayaran')->findOrFail($transaksiId);
 
@@ -169,8 +183,14 @@ class PaymentController extends Controller
             ], 403);
         }
 
+        // Check if expired
+        if (PaymentService::isPaymentExpired($transaksi)) {
+            PaymentService::expireTransaction($transaksi);
+            $transaksi->load('pembayaran');
+        }
+
         $expirySeconds = PaymentService::getPaymentExpirySeconds($transaksi);
-        $isExpired = PaymentService::isPaymentExpired($transaksi);
+        $isExpired = $transaksi->status_transaksi === 'Dibatalkan';
 
         return response()->json([
             'success' => true,
@@ -178,6 +198,55 @@ class PaymentController extends Controller
             'payment_status' => $transaksi->pembayaran?->status_pembayaran,
             'expired' => $isExpired,
             'expiry_seconds' => max(0, $expirySeconds),
+        ]);
+    }
+
+    /**
+     * Complete payment (automatically confirm)
+     */
+    public function pay(Request $request)
+    {
+        $transaksiId = $request->input('transaksi_id') ?? session('last_transaksi_id') ?? session('transaksi_id');
+        
+        if (!$transaksiId) {
+            return response()->json(['success' => false, 'message' => 'Transaksi tidak ditemukan'], 400);
+        }
+
+        $transaksi = Transaksi::with(['pembeli', 'pembayaran'])->findOrFail($transaksiId);
+
+        // Verify ownership
+        if ($transaksi->pembeli->user_id !== auth()->id()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        if ($transaksi->status_transaksi === 'Dibatalkan') {
+            return response()->json(['success' => false, 'message' => 'Transaksi sudah dibatalkan/expired.'], 400);
+        }
+
+        $pembayaran = $transaksi->pembayaran;
+        if (!$pembayaran) {
+            $pembayaran = PaymentService::createPayment(
+                $transaksi,
+                $request->input('metode_pembayaran', 'bca_va'),
+                3000
+            );
+        } else if ($request->has('metode_pembayaran')) {
+            $pembayaran->update([
+                'metode_pembayaran' => $request->input('metode_pembayaran')
+            ]);
+        }
+
+        // Update status_pembayaran to 'Berhasil'
+        // The DB trigger `trg_status_transaksi` automatically updates status_transaksi to 'Berhasil'
+        $pembayaran->update([
+            'status_pembayaran' => 'Berhasil',
+            'tanggal_bayar' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pembayaran berhasil dikonfirmasi secara otomatis!',
+            'redirect_url' => route('payment.success', ['transaksi_id' => $transaksi->id])
         ]);
     }
 

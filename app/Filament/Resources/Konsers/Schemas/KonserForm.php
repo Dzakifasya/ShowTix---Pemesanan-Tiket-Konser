@@ -37,8 +37,9 @@ class KonserForm
                 FileUpload::make('poster')
                     ->image()
                     ->disk('public')
-                    ->directory('poster-konser')
-                    ->preserveFilenames(),
+                    ->directory('posters')
+                    ->imageEditor()
+                    ->maxSize(5120),
 
                 Select::make('status_konser')
                     ->options([

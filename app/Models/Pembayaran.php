@@ -13,6 +13,11 @@ class Pembayaran extends Model
         'metode_pembayaran',
         'status_pembayaran',
         'bukti_pembayaran',
+        'tanggal_bayar',
+    ];
+
+    protected $casts = [
+        'tanggal_bayar' => 'datetime',
     ];
 
     public function transaksi(): BelongsTo
