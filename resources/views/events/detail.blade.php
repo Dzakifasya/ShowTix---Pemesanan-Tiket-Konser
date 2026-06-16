@@ -103,6 +103,55 @@
                     </div>
                 </div>
 
+                <!-- Artist Lineup -->
+                <div class="space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+                        <div>
+                            <p class="text-xs text-[#FF5C00] uppercase font-extrabold tracking-widest mb-2">Lineup</p>
+                            <h2 class="text-2xl font-bold text-white">Artis yang Tampil</h2>
+                        </div>
+                        <span class="text-xs text-[#94A3B8]">{{ $artists->count() }} artis dalam konser ini</span>
+                    </div>
+
+                    @if($artists->count() > 0)
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            @foreach($artists as $artis)
+                                <div class="bg-[#081224]/60 border border-[#0047FF]/10 rounded-[24px] p-4 backdrop-blur-sm flex gap-4 hover:border-[#FF5C00]/40 transition duration-300">
+                                    <div class="w-20 h-20 rounded-2xl overflow-hidden bg-[#0B1730] border border-white/5 flex-shrink-0">
+                                        @if($artis->foto_artis)
+                                            <img src="{{ asset('storage/' . $artis->foto_artis) }}"
+                                                 alt="{{ $artis->nama_artis }}"
+                                                 class="w-full h-full object-cover">
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center text-[#0047FF]">
+                                                <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                                                </svg>
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    <div class="min-w-0 flex-1">
+                                        <h3 class="text-base font-extrabold text-white truncate">{{ $artis->nama_artis }}</h3>
+                                        <div class="mt-3 flex flex-wrap gap-2">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold bg-[#0047FF]/10 text-[#7EA0FF] border border-[#0047FF]/20">
+                                                {{ $artis->genre }}
+                                            </span>
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold bg-[#FF5C00]/10 text-[#FF9A5C] border border-[#FF5C00]/20">
+                                                {{ $artis->negara_asal }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="bg-[#081224]/40 border border-[#0047FF]/10 rounded-[24px] p-6 text-[#94A3B8]">
+                            Lineup artis belum tersedia.
+                        </div>
+                    @endif
+                </div>
+
                 <!-- Description -->
                 <div class="bg-[#081224]/40 border border-[#0047FF]/10 rounded-[24px] p-6 sm:p-8 backdrop-blur-sm shadow-[0_10px_30px_rgba(0,0,0,0.2)]">
                     <h2 class="text-xl md:text-2xl font-bold text-white mb-4">Tentang Konser</h2>

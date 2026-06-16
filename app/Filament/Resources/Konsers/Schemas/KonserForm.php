@@ -30,6 +30,17 @@ class KonserForm
                 TimePicker::make('waktu_konser')
                     ->required(),
 
+                Select::make('artis')
+                    ->relationship(
+                        name: 'artis',
+                        titleAttribute: 'nama_artis'
+                    )
+                    ->multiple()
+                    ->preload()
+                    ->searchable()
+                    ->label('Daftar Artis')
+                    ->columnSpanFull(),
+
                 TextInput::make('lokasi')
                     ->required()
                     ->maxLength(255),

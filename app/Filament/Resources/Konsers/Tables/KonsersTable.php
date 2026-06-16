@@ -19,6 +19,11 @@ class KonsersTable
                     ->searchable()
                     ->sortable(),
 
+                TextColumn::make('artis.nama_artis')
+                    ->badge()
+                    ->separator(',')
+                    ->label('Artis'),
+
                 TextColumn::make('tanggal_konser')
                     ->date()
                     ->sortable(),
