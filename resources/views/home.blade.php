@@ -4,24 +4,23 @@
 
 @section('content')
 <!-- Hero Section -->
-<section class="relative min-h-[calc(100vh-5rem)] flex items-center overflow-hidden bg-[#050816] pt-14 pb-40 md:pb-36">
+<section class="relative min-h-[calc(100vh-5rem)] flex items-center justify-center overflow-hidden bg-[#050816] px-4 pt-16 pb-36 md:pb-40">
     <!-- Background Image with Overlay and Spotlight / Particles -->
     <div class="absolute inset-0 z-0 bg-gradient-to-b from-[#050816] via-[#081224] to-[#0B1730]">
-        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1800&auto=format&fit=crop" 
-             alt="Concert stage" 
-             class="w-full h-full object-cover opacity-28 scale-105 [filter:grayscale(1)_contrast(1.18)_brightness(0.62)]">
-        <div class="absolute inset-0 bg-[linear-gradient(105deg,rgba(5,8,22,0.96)_0%,rgba(5,8,22,0.84)_36%,rgba(0,71,255,0.22)_62%,rgba(255,92,0,0.16)_100%)]"></div>
-        <div class="absolute inset-0 bg-gradient-to-b from-[#050816]/35 via-[#050816]/20 to-[#050816]"></div>
-        <div class="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_68%_42%,rgba(255,92,0,0.18),transparent_24rem)]"></div>
+        <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1600&auto=format&fit=crop"
+             alt="Concert Crowd"
+             class="w-full h-full object-cover opacity-35 scale-105 [filter:saturate(0.9)_contrast(1.08)_brightness(0.70)]">
+        <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,8,22,0.72)_0%,rgba(5,8,22,0.56)_46%,rgba(5,8,22,0.94)_100%)]"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_24%_18%,rgba(0,71,255,0.24),transparent_30rem),radial-gradient(circle_at_78%_62%,rgba(255,92,0,0.18),transparent_26rem)]"></div>
         
         <!-- Spotlight & Light Glows -->
         <div class="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-[#0047FF]/15 blur-[150px] animate-pulse"></div>
         <div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-[#FF5C00]/10 blur-[150px] animate-pulse" style="animation-delay: 3s;"></div>
         
         <!-- Spotlight beam effect -->
-        <div class="absolute top-0 left-[58%] -translate-x-1/2 w-[260px] h-[420px] bg-gradient-to-b from-[#0047FF]/14 to-transparent rounded-full blur-[56px]"></div>
-        <div class="absolute top-0 left-[58%] -translate-x-1/2 w-[2px] h-[420px] bg-gradient-to-b from-[#1E63FF]/40 to-transparent blur-[2px]"></div>
-        <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#050816] to-transparent"></div>
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[220px] h-[360px] bg-gradient-to-b from-[#0047FF]/14 to-transparent rounded-full blur-[50px]"></div>
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[2px] h-[360px] bg-gradient-to-b from-[#1E63FF]/35 to-transparent blur-[2px]"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-52 bg-gradient-to-t from-[#050816] via-[#050816]/80 to-transparent"></div>
         
         <!-- Floating Particles -->
         <div class="absolute inset-0 opacity-40 pointer-events-none">
@@ -33,53 +32,36 @@
     </div>
 
     <!-- Hero Content -->
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div class="max-w-4xl">
-        <span class="inline-flex items-center gap-2 py-2 px-4 rounded-full text-[11px] font-extrabold tracking-wider bg-[#081224]/70 text-[#FF6B00] border border-[#0047FF]/20 mb-6 backdrop-blur-md uppercase shadow-[0_0_18px_rgba(0,71,255,0.18)]">
-            <span class="w-2 h-2 rounded-full bg-[#FF5C00] shadow-[0_0_14px_rgba(255,92,0,0.8)]"></span> Sistem Pemesanan Tiket Konser
+    <div class="relative z-10 max-w-5xl mx-auto px-0 sm:px-6 lg:px-8 text-center py-6">
+        <span class="inline-flex items-center gap-2 py-2 px-4 rounded-full text-[11px] font-extrabold tracking-wider bg-[#081224]/65 text-[#FF6B00] border border-[#FF6B00]/25 mb-6 backdrop-blur-md uppercase shadow-[0_0_18px_rgba(255,92,0,0.16)]">
+            <span class="w-2 h-2 rounded-full bg-[#FF5C00] shadow-[0_0_14px_rgba(255,92,0,0.8)]"></span> Platform Pemesanan Tiket #1
         </span>
-        <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white tracking-normal mb-6 leading-[1.04]">
+        <h1 class="font-display text-5xl md:text-7xl font-extrabold text-white tracking-normal mb-6 leading-[1.05] drop-shadow-[0_12px_38px_rgba(0,0,0,0.45)]">
             <span class="block">SHOWTIX</span>
-            <span class="block text-[#D1D5DB]">Konser favorit,</span>
-            <span class="block bg-gradient-to-r from-[#1E63FF] via-[#0B57FF] to-[#FF6B00] bg-clip-text text-transparent drop-shadow-[0_0_28px_rgba(0,71,255,0.26)]">
-                tiket tanpa ribet.
+            <span class="block bg-gradient-to-r from-[#0047FF] via-[#1E63FF] to-[#FF6B00] bg-clip-text text-transparent">
+                Pesan Tiket Konser Favoritmu
             </span>
         </h1>
-        <p class="text-base md:text-lg text-[#D1D5DB] max-w-2xl mb-9 font-normal leading-relaxed">
-            Temukan konser, pilih kategori tiket, dan lanjutkan pembayaran dalam satu alur yang cepat, elegan, dan aman.
+        <p class="text-lg md:text-xl text-[#D1D5DB] max-w-2xl mx-auto mb-9 font-normal leading-relaxed drop-shadow-[0_8px_24px_rgba(0,0,0,0.42)]">
+            Nikmati pengalaman membeli tiket konser dengan cepat, aman dan mudah secara online tanpa antre.
         </p>
-        <div class="relative z-20 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+        <div class="relative z-20 flex flex-col sm:flex-row justify-center items-center gap-4">
             <a href="#concerts" 
-               class="inline-flex justify-center items-center gap-2 bg-gradient-to-r from-[#0047FF] to-[#FF6B00] hover:from-[#0B57FF] hover:to-[#FF7A00] text-white px-8 py-4 rounded-full font-bold text-base transition-all duration-300 transform hover:scale-105 hover:shadow-[0_0_30px_rgba(0,71,255,0.4),0_0_26px_rgba(255,92,0,0.25)]">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg>
-                Jelajahi Konser
+               class="w-full sm:w-auto inline-flex justify-center items-center gap-2 bg-gradient-to-r from-[#0047FF] to-[#FF6B00] hover:from-[#0B57FF] hover:to-[#FF7A00] text-white px-8 py-4 rounded-full font-bold text-base transition-all duration-300 transform hover:scale-105 hover:shadow-[0_0_30px_rgba(0,71,255,0.4),0_0_26px_rgba(255,92,0,0.25)]">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                Explore Concert
             </a>
             <a href="#why-us" 
-               class="inline-flex justify-center items-center bg-[#081224]/65 border border-[#0047FF]/20 hover:border-[#FF5C00]/50 hover:bg-[#0B1730]/80 text-white px-8 py-4 rounded-full font-bold text-base transition-all duration-300 backdrop-blur-md">
-                Kenapa SHOWTIX
+               class="w-full sm:w-auto inline-flex justify-center items-center bg-[#081224]/55 border border-white/15 hover:border-[#0047FF]/45 hover:bg-[#0B1730]/80 text-white px-8 py-4 rounded-full font-bold text-base transition-all duration-300 backdrop-blur-md">
+                Learn More
             </a>
-        </div>
-        <div class="mt-10 grid grid-cols-3 max-w-xl divide-x divide-white/10 rounded-3xl border border-white/10 bg-[#081224]/45 backdrop-blur-md">
-            <div class="px-4 py-4">
-                <p class="text-xl font-extrabold text-white">24/7</p>
-                <p class="text-[11px] text-[#94A3B8] uppercase font-bold tracking-wider">Support</p>
-            </div>
-            <div class="px-4 py-4">
-                <p class="text-xl font-extrabold text-[#FF6B00]">E-ticket</p>
-                <p class="text-[11px] text-[#94A3B8] uppercase font-bold tracking-wider">Instant</p>
-            </div>
-            <div class="px-4 py-4">
-                <p class="text-xl font-extrabold text-white">Secure</p>
-                <p class="text-[11px] text-[#94A3B8] uppercase font-bold tracking-wider">Payment</p>
-            </div>
-        </div>
         </div>
     </div>
 </section>
 
 <!-- Search & Filter Section -->
-<section class="relative z-30 -mt-20 md:-mt-16 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="bg-[#081224]/92 border border-[#0047FF]/25 backdrop-blur-xl rounded-3xl p-5 sm:p-6 shadow-[0_24px_70px_rgba(0,0,0,0.35),0_0_30px_rgba(0,71,255,0.12)] hover:border-[#0047FF]/45 transition duration-300">
+<section class="relative z-30 -mt-14 md:-mt-16 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-[#081224]/90 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-[0_24px_70px_rgba(0,0,0,0.35),0_0_30px_rgba(0,71,255,0.12)] hover:border-[#0047FF]/45 transition duration-300">
         <form method="GET" action="{{ route('search') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <!-- Search input -->
             <div class="relative">
